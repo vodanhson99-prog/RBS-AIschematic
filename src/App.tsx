@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import type { CircuitComponent, ComponentType, LogEntry, SimulationState, Wire, AISchematicRecipe } from './types/circuit';
+import type { CircuitComponent, ComponentType, LogEntry, SimulationState, Wire, AISchematicRecipe, UserAISettings } from './types/circuit';
 import { createComponentInstance } from './data/componentDefinitions';
 import { CircuitCanvas } from './components/canvas/CircuitCanvas';
 import { TopHeader } from './components/toolbar/TopHeader';
@@ -9,6 +9,7 @@ import { WiringLogPanel } from './components/log/WiringLogPanel';
 import { AICircuitAssistant } from './components/ai/AICircuitAssistant';
 import { analyzePinSuggestions } from './services/suggestionEngine';
 import { audioSynth } from './services/audioSynthesizer';
+import { loadStoredAISettings } from './services/aiEngine';
 
 export const App: React.FC = () => {
   // Initial canvas state with Arduino Uno and Breadboard
@@ -78,8 +79,8 @@ export const App: React.FC = () => {
 
   const simTickRef = useRef(0);
 
-  // API Key state for AI
-  const [apiKey, setApiKey] = useState<string>('');
+  // Multi-provider AI Settings state (Gemini, OpenAI, Claude, DeepSeek, Kimi, Custom)
+  const [aiSettings, setAiSettings] = useState<UserAISettings>(() => loadStoredAISettings());
 
   // Active side panel tab: 'ai' | 'log'
   const [activeSideTab, setActiveSideTab] = useState<'ai' | 'log'>('ai');
@@ -655,8 +656,8 @@ export const App: React.FC = () => {
             {activeSideTab === 'ai' ? (
               <AICircuitAssistant
                 onApplyRecipe={handleApplyRecipe}
-                apiKey={apiKey}
-                onUpdateApiKey={setApiKey}
+                aiSettings={aiSettings}
+                onUpdateAISettings={setAiSettings}
               />
             ) : (
               <WiringLogPanel

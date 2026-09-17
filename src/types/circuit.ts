@@ -166,3 +166,25 @@ export interface SimulationState {
   buttonPressed?: boolean;
 }
 
+export type AIProvider = 'gemini' | 'openai' | 'anthropic' | 'deepseek' | 'kimi' | 'custom';
+
+export interface UserAISettings {
+  provider: AIProvider;
+  apiKey: string;
+  model: string;
+  customBaseUrl?: string;
+}
+
+export interface AIProviderMetadata {
+  id: AIProvider;
+  name: string;
+  badge: string;
+  color: string;
+  defaultModel: string;
+  models: string[];
+  defaultBaseUrl?: string;
+  keyPlaceholder: string;
+  docUrl: string;
+  description: string;
+}
+

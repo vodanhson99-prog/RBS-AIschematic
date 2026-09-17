@@ -1,25 +1,39 @@
 import React, { useState } from 'react';
-import { Sparkles, Bot, ArrowRight, Settings, Check, HelpCircle, Layers } from 'lucide-react';
-import type { AISchematicRecipe } from '../../types/circuit';
-import { synthesizeCircuitFromPrompt } from '../../services/aiEngine';
+import { 
+  Sparkles, 
+  Bot, 
+  ArrowRight, 
+  Settings, 
+  Check, 
+  HelpCircle, 
+  Layers, 
+  AlertCircle,
+  Radio
+} from 'lucide-react';
+import type { AISchematicRecipe, UserAISettings } from '../../types/circuit';
+import { synthesizeCircuitFromPrompt, AI_PROVIDERS_CONFIG } from '../../services/aiEngine';
+import { AISettingsModal } from './AISettingsModal';
 
 interface Props {
   onApplyRecipe: (recipe: AISchematicRecipe) => void;
-  apiKey: string;
-  onUpdateApiKey: (key: string) => void;
+  aiSettings: UserAISettings;
+  onUpdateAISettings: (settings: UserAISettings) => void;
 }
 
 export const AICircuitAssistant: React.FC<Props> = ({
   onApplyRecipe,
-  apiKey,
-  onUpdateApiKey,
+  aiSettings,
+  onUpdateAISettings,
 }) => {
   const [promptInput, setPromptInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentRecipe, setCurrentRecipe] = useState<AISchematicRecipe | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [tempApiKey, setTempApiKey] = useState(apiKey);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [appliedSuccess, setAppliedSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const providerMeta = AI_PROVIDERS_CONFIG[aiSettings.provider] || AI_PROVIDERS_CONFIG['gemini'];
+  const hasCustomKey = Boolean(aiSettings.apiKey?.trim() || aiSettings.provider === 'custom');
 
   // Handle prompt submit
   const handleGenerate = async (queryText?: string) => {
@@ -28,12 +42,14 @@ export const AICircuitAssistant: React.FC<Props> = ({
 
     setIsLoading(true);
     setAppliedSuccess(false);
+    setErrorMsg(null);
 
     try {
-      const recipe = await synthesizeCircuitFromPrompt(text, apiKey);
+      const recipe = await synthesizeCircuitFromPrompt(text, aiSettings);
       setCurrentRecipe(recipe);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setErrorMsg(e.message || 'Không thể tổng hợp mạch điện. Vui lòng thử lại!');
     } finally {
       setIsLoading(false);
     }
@@ -55,50 +71,59 @@ export const AICircuitAssistant: React.FC<Props> = ({
             <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
           </div>
           <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <h3 className="font-bold text-slate-100 text-sm">
                 AI Circuit Assistant
               </h3>
-              <span className="badge-ai-model">Gemini Engine</span>
+              <span 
+                className="badge-ai-model cursor-pointer hover:opacity-90 transition flex items-center gap-1"
+                onClick={() => setShowSettingsModal(true)}
+                title="Bấm để đổi nhà cung cấp AI & Model"
+                style={{ 
+                  backgroundColor: `${providerMeta.color}20`,
+                  color: providerMeta.color,
+                  borderColor: `${providerMeta.color}60`
+                }}
+              >
+                <Radio className="w-2.5 h-2.5 shrink-0" />
+                <span className="truncate max-w-[120px]">{providerMeta.badge}: {aiSettings.model}</span>
+              </span>
             </div>
-            <p className="text-[11px] text-slate-400 truncate">Tạo sơ đồ nối chân tự động theo prompt</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-[11px] text-slate-400 truncate">Tự động nối chân theo prompt</p>
+              <span className={`text-[10px] font-medium px-1.5 py-0.2 rounded-full border ${
+                hasCustomKey 
+                  ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/40' 
+                  : 'bg-slate-800 text-slate-400 border-slate-700'
+              }`}>
+                {hasCustomKey ? '● Live API' : '○ Heuristic'}
+              </span>
+            </div>
           </div>
         </div>
 
         <button
-          onClick={() => setShowSettings(!showSettings)}
+          onClick={() => setShowSettingsModal(true)}
           className="btn-icon-settings"
-          title="Cài đặt API Key AI"
+          title="Cài đặt Nhà Cung Cấp AI & API Key (OpenAI, Gemini, Claude, DeepSeek, Kimi...)"
         >
-          <Settings className="w-4 h-4 text-slate-300" />
+          <Settings className="w-4 h-4 text-slate-300 hover:text-cyan-400 transition" />
         </button>
       </div>
 
-      {/* Settings Modal Bar (if opened) */}
-      {showSettings && (
-        <div className="ai-settings-banner">
-          <div className="flex justify-between items-center mb-1.5 flex-wrap gap-1">
-            <span className="text-xs font-semibold text-slate-200">Cấu hình API Key (Tuỳ chọn)</span>
-            <span className="text-[10px] text-emerald-400 font-medium">Engine tích hợp sẵn</span>
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="password"
-              placeholder="Nhập Gemini API Key hoặc OpenAI API Key..."
-              value={tempApiKey}
-              onChange={(e) => setTempApiKey(e.target.value)}
-              className="ai-api-input"
-            />
-            <button
-              onClick={() => {
-                onUpdateApiKey(tempApiKey);
-                setShowSettings(false);
-              }}
-              className="ai-api-save-btn"
-            >
-              Lưu
-            </button>
-          </div>
+      {/* Settings Modal Component */}
+      <AISettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        currentSettings={aiSettings}
+        onSaveSettings={onUpdateAISettings}
+      />
+
+      {/* Error alert if any */}
+      {errorMsg && (
+        <div className="mx-3 mt-2 p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/50 text-rose-300 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <span className="flex-1">{errorMsg}</span>
         </div>
       )}
 
@@ -120,7 +145,7 @@ export const AICircuitAssistant: React.FC<Props> = ({
             className="btn-ai-generate"
           >
             {isLoading ? (
-              <span className="text-xs font-bold animate-pulse">⚡ Tạo...</span>
+              <span className="text-xs font-bold animate-pulse">⚡ Đang xử lý...</span>
             ) : (
               <>
                 <span>Tạo sơ đồ</span>
