@@ -153,7 +153,7 @@ export const ArduinoUnoSvg: React.FC<Props> = ({
               onPinClick(pin.id, e);
             }}
           >
-            <title>{pin.name || pin.label} ({pin.description || pin.id})</title>
+            <title>{`${pin.name || pin.label} (${pin.description || pin.id})`}</title>
 
             {/* Generous Hitbox (r=7px for 14px pitch between headers) */}
             <circle

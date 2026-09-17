@@ -85,7 +85,7 @@ export const PushbuttonSvg: React.FC<Props> = ({
             onPinClick(pin.id, e);
           }}
         >
-          <title>Chân nút nhấn {pin.label}</title>
+          <title>{`Chân nút nhấn ${pin.label}`}</title>
           {/* Generous Hitbox */}
           <circle r="9" fill="transparent" pointerEvents="all" className="pin-hitbox" />
           {/* Hover Ring */}

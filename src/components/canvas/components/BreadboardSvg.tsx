@@ -110,7 +110,7 @@ export const BreadboardSvg: React.FC<Props> = ({
               onPinClick(pin.id, e);
             }}
           >
-            <title>{pin.name || pin.label} ({pin.description || pin.id})</title>
+            <title>{`${pin.name || pin.label} (${pin.description || pin.id})`}</title>
 
             {/* Generous Invisible Hitbox (r=11px for 28px pitch, covers socket area effortlessly) */}
             <circle

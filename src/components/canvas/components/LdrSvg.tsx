@@ -62,7 +62,7 @@ export const LdrSvg: React.FC<Props> = ({
         style={{ cursor: 'pointer' }}
         onClick={handleDiskClick}
       >
-        <title>Quang trở LDR - Nhấp để đổi độ sáng: {lightLevel}%</title>
+        <title>{`Quang trở LDR - Nhấp để đổi độ sáng: ${lightLevel}%`}</title>
       </circle>
 
       {/* Outer red ceramic rim */}
