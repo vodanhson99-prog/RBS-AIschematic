@@ -8,31 +8,31 @@ export const PREBUILT_RECIPES: AISchematicRecipe[] = [
     promptSample: 'Làm mạch đèn giao thông 3 màu Đỏ, Vàng, Xanh điều khiển bằng Arduino Uno',
     description: 'Mạch mô phỏng chu kỳ đèn giao thông giao lộ với 3 đèn LED riêng biệt qua các điện trở hạn dòng 220Ω bảo vệ đèn.',
     components: [
-      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 180 },
-      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 180 },
-      { id: 'r_red', type: 'resistor', name: 'Điện trở 220Ω (Đỏ)', x: 470, y: 120, properties: { resistance: 220 } },
-      { id: 'r_yellow', type: 'resistor', name: 'Điện trở 220Ω (Vàng)', x: 570, y: 120, properties: { resistance: 220 } },
-      { id: 'r_green', type: 'resistor', name: 'Điện trở 220Ω (Xanh)', x: 670, y: 120, properties: { resistance: 220 } },
-      { id: 'led_red', type: 'led', name: 'Đèn LED Đỏ', x: 490, y: 30, properties: { color: 'red' } },
-      { id: 'led_yellow', type: 'led', name: 'Đèn LED Vàng', x: 590, y: 30, properties: { color: 'yellow' } },
-      { id: 'led_green', type: 'led', name: 'Đèn LED Xanh', x: 690, y: 30, properties: { color: 'green' } },
+      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 160 },
+      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 160 },
+      { id: 'r_red', type: 'resistor', name: 'Điện trở 220Ω (Đỏ)', x: 470, y: 35, properties: { resistance: 220 } },
+      { id: 'r_yellow', type: 'resistor', name: 'Điện trở 220Ω (Vàng)', x: 590, y: 35, properties: { resistance: 220 } },
+      { id: 'r_green', type: 'resistor', name: 'Điện trở 220Ω (Xanh)', x: 710, y: 35, properties: { resistance: 220 } },
+      { id: 'led_red', type: 'led', name: 'Đèn LED Đỏ', x: 520, y: 85, properties: { color: 'red' } },
+      { id: 'led_yellow', type: 'led', name: 'Đèn LED Vàng', x: 640, y: 85, properties: { color: 'yellow' } },
+      { id: 'led_green', type: 'led', name: 'Đèn LED Xanh', x: 760, y: 85, properties: { color: 'green' } },
     ],
     wires: [
-      // Arduino GND to Breadboard Bottom Rail (-)
+      // Arduino GND to Breadboard Top Rail (-)
       { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'bb', toPinId: 'top_minus_0', color: '#111827', note: 'Nối đất chung Arduino GND lên Breadboard rail (-)' },
       
       // Control signals from Arduino to Resistors
       { fromCompId: 'arduino', fromPinId: 'd13', toCompId: 'r_red', toPinId: 'pin1', color: '#ef4444', note: 'Chân D13 điều khiển đèn Đỏ' },
       { fromCompId: 'r_red', fromPinId: 'pin2', toCompId: 'led_red', toPinId: 'anode', color: '#ef4444', note: 'Qua điện trở 220Ω bảo vệ Anode LED Đỏ' },
-      { fromCompId: 'led_red', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_2', color: '#111827', note: 'Cathode LED Đỏ về GND' },
+      { fromCompId: 'led_red', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_3', color: '#111827', note: 'Cathode LED Đỏ về GND' },
 
       { fromCompId: 'arduino', fromPinId: 'd12', toCompId: 'r_yellow', toPinId: 'pin1', color: '#eab308', note: 'Chân D12 điều khiển đèn Vàng' },
       { fromCompId: 'r_yellow', fromPinId: 'pin2', toCompId: 'led_yellow', toPinId: 'anode', color: '#eab308', note: 'Qua điện trở 220Ω bảo vệ Anode LED Vàng' },
-      { fromCompId: 'led_yellow', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_6', color: '#111827', note: 'Cathode LED Vàng về GND' },
+      { fromCompId: 'led_yellow', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_7', color: '#111827', note: 'Cathode LED Vàng về GND' },
 
       { fromCompId: 'arduino', fromPinId: 'd11', toCompId: 'r_green', toPinId: 'pin1', color: '#22c55e', note: 'Chân D11 điều khiển đèn Xanh' },
       { fromCompId: 'r_green', fromPinId: 'pin2', toCompId: 'led_green', toPinId: 'anode', color: '#22c55e', note: 'Qua điện trở 220Ω bảo vệ Anode LED Xanh' },
-      { fromCompId: 'led_green', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_10', color: '#111827', note: 'Cathode LED Xanh về GND' },
+      { fromCompId: 'led_green', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_11', color: '#111827', note: 'Cathode LED Xanh về GND' },
     ],
     steps: [
       'Bước 1: Nối chân GND của Arduino Uno vào thanh ray màu xanh (-) trên Breadboard để tạo đường đất chung.',
@@ -49,35 +49,40 @@ export const PREBUILT_RECIPES: AISchematicRecipe[] = [
     promptSample: 'Mạch đo khoảng cách dùng cảm biến siêu âm HC-SR04 và còi Buzzer cảnh báo',
     description: 'Hệ thống radar cảnh báo va chạm: Cảm biến siêu âm liên tục quét khoảng cách vật cản, kích hoạt còi Buzzer và đèn LED đỏ khi vật cản tiến gần dưới khoảng cách nguy hiểm.',
     components: [
-      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 180 },
-      { id: 'sonar', type: 'ultrasonic', name: 'Cảm biến siêu âm HC-SR04', x: 450, y: 70, properties: { distance: 35 } },
-      { id: 'buzzer', type: 'buzzer', name: 'Còi chíp Piezo Buzzer', x: 620, y: 80 },
-      { id: 'led_warn', type: 'led', name: 'Đèn LED Cảnh báo', x: 730, y: 80, properties: { color: 'red' } },
-      { id: 'r_warn', type: 'resistor', name: 'Điện trở 220Ω', x: 710, y: 220, properties: { resistance: 220 } },
+      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 160 },
+      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 160 },
+      { id: 'sonar', type: 'ultrasonic', name: 'Cảm biến siêu âm HC-SR04', x: 460, y: 45, properties: { distance: 35 } },
+      { id: 'buzzer', type: 'buzzer', name: 'Còi chíp Piezo Buzzer', x: 610, y: 50 },
+      { id: 'r_warn', type: 'resistor', name: 'Điện trở 220Ω', x: 710, y: 35, properties: { resistance: 220 } },
+      { id: 'led_warn', type: 'led', name: 'Đèn LED Cảnh báo', x: 770, y: 85, properties: { color: 'red' } },
     ],
     wires: [
-      // Sonar power
-      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'sonar', toPinId: 'vcc', color: '#dc2626', note: 'Cấp nguồn 5V cho cảm biến siêu âm' },
-      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'sonar', toPinId: 'gnd', color: '#111827', note: 'Nối đất GND cho cảm biến siêu âm' },
-      // Sonar signals
+      // Master Power Rails
+      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'bb', toPinId: 'bot_plus_0', color: '#dc2626', note: 'Arduino 5V cấp nguồn thanh ray (+) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'bb', toPinId: 'bot_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'bb', toPinId: 'top_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) trên' },
+
+      // Sonar power & signals
+      { fromCompId: 'bb', fromPinId: 'bot_plus_1', toCompId: 'sonar', toPinId: 'vcc', color: '#dc2626', note: 'Cấp nguồn 5V cho cảm biến siêu âm' },
+      { fromCompId: 'bb', fromPinId: 'bot_minus_1', toCompId: 'sonar', toPinId: 'gnd', color: '#111827', note: 'Nối đất GND cho cảm biến siêu âm' },
       { fromCompId: 'arduino', fromPinId: 'd9', toCompId: 'sonar', toPinId: 'trig', color: '#3b82f6', note: 'Chân Trig nối vào D9 (phát xung siêu âm)' },
       { fromCompId: 'arduino', fromPinId: 'd10', toCompId: 'sonar', toPinId: 'echo', color: '#06b6d4', note: 'Chân Echo nối vào D10 (nhận xung phản xạ)' },
 
       // Buzzer
       { fromCompId: 'arduino', fromPinId: 'd8', toCompId: 'buzzer', toPinId: 'pos', color: '#f59e0b', note: 'Chân D8 kích hoạt còi buzzer' },
-      { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'buzzer', toPinId: 'neg', color: '#111827', note: 'Chân âm còi nối về GND' },
+      { fromCompId: 'buzzer', fromPinId: 'neg', toCompId: 'bb', toPinId: 'top_minus_7', color: '#111827', note: 'Chân âm còi nối về ray GND' },
 
       // LED warning
       { fromCompId: 'arduino', fromPinId: 'd7', toCompId: 'r_warn', toPinId: 'pin1', color: '#ef4444', note: 'Chân D7 điều khiển LED cảnh báo' },
-      { fromCompId: 'r_warn', fromPinId: 'pin2', toCompId: 'led_warn', toPinId: 'anode', color: '#ef4444', note: 'Điện trở 220Ω vào Anode' },
-      { fromCompId: 'led_warn', fromPinId: 'cathode', toCompId: 'buzzer', toPinId: 'neg', color: '#111827', note: 'Cathode LED về GND chung' },
+      { fromCompId: 'r_warn', fromPinId: 'pin2', toCompId: 'led_warn', toPinId: 'anode', color: '#ef4444', note: 'Điện trở 220Ω vào Anode LED' },
+      { fromCompId: 'led_warn', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_12', color: '#111827', note: 'Cathode LED về ray GND' },
     ],
     steps: [
-      'Bước 1: Nối chân VCC của cảm biến HC-SR04 vào chân 5V của Arduino (dây đỏ).',
-      'Bước 2: Nối chân GND của HC-SR04 vào chân GND của Arduino (dây đen).',
-      'Bước 3: Nối chân Trig của HC-SR04 vào chân Digital 9, và chân Echo vào chân Digital 10.',
-      'Bước 4: Nối chân dương (+) của Còi Buzzer vào chân Digital 8, chân âm (-) nối về GND.',
-      'Bước 5: Nối chân Digital 7 qua điện trở 220Ω vào chân Anode của LED Đỏ, chân Cathode về GND.',
+      'Bước 1: Cấp nguồn 5V và GND từ Arduino sang các thanh ray nguồn trên Breadboard.',
+      'Bước 2: Nối chân VCC và GND của HC-SR04 vào thanh ray 5V và GND của Breadboard.',
+      'Bước 3: Nối chân Trig của HC-SR04 vào chân D9, và chân Echo vào chân D10 của Arduino.',
+      'Bước 4: Nối chân dương (+) còi Buzzer vào chân D8, chân âm (-) nối về thanh ray GND.',
+      'Bước 5: Nối chân D7 qua điện trở hạn dòng 220Ω vào chân Anode (+) của LED Đỏ, chân Cathode nối về ray GND.',
     ],
   },
   {
@@ -87,31 +92,38 @@ export const PREBUILT_RECIPES: AISchematicRecipe[] = [
     promptSample: 'Mạch điều khiển đèn LED bật tắt bằng nút bấm nhấn nhả với Arduino',
     description: 'Mạch sử dụng nút nhấn nối điện trở kéo xuống (pull-down 10kΩ) để gửi tín hiệu số chuẩn xác vào Arduino điều khiển đèn LED.',
     components: [
-      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 180 },
-      { id: 'btn', type: 'pushbutton', name: 'Nút bấm 4 chân', x: 450, y: 120 },
-      { id: 'r_pull', type: 'resistor', name: 'Điện trở 10kΩ (Kéo xuống)', x: 550, y: 120, properties: { resistance: 10000 } },
-      { id: 'led', type: 'led', name: 'Đèn LED Xanh dương', x: 670, y: 100, properties: { color: 'blue' } },
-      { id: 'r_led', type: 'resistor', name: 'Điện trở 220Ω (LED)', x: 650, y: 220, properties: { resistance: 220 } },
+      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 160 },
+      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 160 },
+      { id: 'btn', type: 'pushbutton', name: 'Nút bấm 4 chân', x: 470, y: 65 },
+      { id: 'r_pull', type: 'resistor', name: 'Điện trở 10kΩ (Kéo xuống)', x: 560, y: 35, properties: { resistance: 10000 } },
+      { id: 'r_led', type: 'resistor', name: 'Điện trở 220Ω (LED)', x: 690, y: 35, properties: { resistance: 220 } },
+      { id: 'led', type: 'led', name: 'Đèn LED Xanh dương', x: 740, y: 85, properties: { color: 'blue' } },
     ],
     wires: [
-      // Button 5V supply
-      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'btn', toPinId: 'term1a', color: '#dc2626', note: 'Cấp nguồn 5V vào chân 1A của nút nhấn' },
-      // Button signal to D2
+      // Master Power Rails
+      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'bb', toPinId: 'bot_plus_0', color: '#dc2626', note: 'Arduino 5V cấp nguồn thanh ray (+) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'bb', toPinId: 'bot_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'bb', toPinId: 'top_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) trên' },
+
+      // Button 5V supply & Signal to D2
+      { fromCompId: 'bb', fromPinId: 'top_plus_1', toCompId: 'btn', toPinId: 'term1a', color: '#dc2626', note: 'Cấp nguồn 5V vào chân 1A của nút nhấn' },
       { fromCompId: 'btn', fromPinId: 'term2a', toCompId: 'arduino', toPinId: 'd2', color: '#3b82f6', note: 'Chân 2A gửi tín hiệu mức cao về D2 khi nhấn nút' },
-      // Pull-down resistor to GND
-      { fromCompId: 'btn', fromPinId: 'term2a', toCompId: 'r_pull', toPinId: 'pin1', color: '#3b82f6', note: 'Nối với điện trở kéo xuống 10kΩ để chống nhiễu chân D2' },
-      { fromCompId: 'r_pull', fromPinId: 'pin2', toCompId: 'arduino', toPinId: 'gnd_bot1', color: '#111827', note: 'Đầu kia điện trở kéo xuống nối GND' },
+
+      // Pull-down resistor 10k to GND (using term2b internally connected to term2a)
+      { fromCompId: 'btn', fromPinId: 'term2b', toCompId: 'r_pull', toPinId: 'pin1', color: '#3b82f6', note: 'Nối với điện trở kéo xuống 10kΩ để chống nhiễu chân D2' },
+      { fromCompId: 'r_pull', fromPinId: 'pin2', toCompId: 'bb', toPinId: 'top_minus_6', color: '#111827', note: 'Đầu kia điện trở kéo xuống nối rail GND' },
+
       // LED control from D13
       { fromCompId: 'arduino', fromPinId: 'd13', toCompId: 'r_led', toPinId: 'pin1', color: '#06b6d4', note: 'Chân D13 điều khiển đèn LED' },
       { fromCompId: 'r_led', fromPinId: 'pin2', toCompId: 'led', toPinId: 'anode', color: '#06b6d4', note: 'Qua điện trở 220Ω vào Anode' },
-      { fromCompId: 'led', fromPinId: 'cathode', toCompId: 'arduino', toPinId: 'gnd_top', color: '#111827', note: 'Cathode LED về GND' },
+      { fromCompId: 'led', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_11', color: '#111827', note: 'Cathode LED về rail GND' },
     ],
     steps: [
-      'Bước 1: Nối chân 5V của Arduino vào chân 1A của Nút nhấn.',
-      'Bước 2: Nối chân 2A của Nút nhấn vào chân Digital 2 của Arduino để đọc trạng thái nút.',
-      'Bước 3: Nối chân 2A này đồng thời vào chân 1 của Điện trở 10kΩ (Pull-down), đầu chân 2 nối về GND Arduino để triệt tiêu điện áp trôi nổi khi không nhấn.',
-      'Bước 4: Nối chân Digital 13 vào điện trở 220Ω, rồi đến chân Anode (+) của đèn LED.',
-      'Bước 5: Nối chân Cathode (-) của đèn LED về GND Arduino.',
+      'Bước 1: Nối nguồn 5V và GND từ Arduino vào các đường ray nguồn Breadboard.',
+      'Bước 2: Cấp 5V vào chân 1A của Nút nhấn.',
+      'Bước 3: Nối chân 2A của Nút nhấn vào chân D2 của Arduino để đọc trạng thái.',
+      'Bước 4: Nối chân 2B của Nút nhấn qua điện trở kéo xuống 10kΩ về ray GND để triệt tiêu điện áp trôi nổi.',
+      'Bước 5: Nối chân D13 qua điện trở 220Ω vào chân Anode (+) của LED, chân Cathode (-) về ray GND.',
     ],
   },
   {
@@ -121,27 +133,32 @@ export const PREBUILT_RECIPES: AISchematicRecipe[] = [
     promptSample: 'Mạch điều khiển góc quay động cơ Servo SG90 bằng biến trở',
     description: 'Sử dụng biến trở đo điện áp analog 0-5V qua chân A0 để điều khiển chính xác vị trí góc quay 0-180 độ của động cơ servo SG90 qua chân PWM D9.',
     components: [
-      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 180 },
-      { id: 'pot', type: 'potentiometer', name: 'Biến trở 10kΩ', x: 450, y: 100 },
-      { id: 'servo', type: 'servo', name: 'Động cơ Servo SG90', x: 620, y: 100 },
+      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 160 },
+      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 160 },
+      { id: 'pot', type: 'potentiometer', name: 'Biến trở 10kΩ', x: 480, y: 50 },
+      { id: 'servo', type: 'servo', name: 'Động cơ Servo SG90', x: 670, y: 50 },
     ],
     wires: [
-      // Potentiometer
-      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'pot', toPinId: 'vcc', color: '#dc2626', note: 'Nguồn 5V cho chân ngoài biến trở' },
-      { fromCompId: 'arduino', fromPinId: 'a0', toCompId: 'pot', toPinId: 'wiper', color: '#eab308', note: 'Chân giữa biến trở gửi điện áp analog về A0' },
-      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'pot', toPinId: 'gnd', color: '#111827', note: 'Nối đất GND cho biến trở' },
+      // Master Power Rails
+      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'bb', toPinId: 'bot_plus_0', color: '#dc2626', note: 'Arduino 5V cấp nguồn thanh ray (+) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'bb', toPinId: 'bot_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) dưới' },
 
-      // Servo
-      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'servo', toPinId: 'vcc', color: '#dc2626', note: 'Dây Đỏ Servo nối vào 5V' },
-      { fromCompId: 'arduino', fromPinId: 'gnd_bot2', toCompId: 'servo', toPinId: 'gnd', color: '#111827', note: 'Dây Nâu Servo nối vào GND' },
+      // Potentiometer
+      { fromCompId: 'bb', fromPinId: 'bot_plus_2', toCompId: 'pot', toPinId: 'vcc', color: '#dc2626', note: 'Nguồn 5V cho chân ngoài biến trở' },
+      { fromCompId: 'pot', fromPinId: 'wiper', toCompId: 'arduino', toPinId: 'a0', color: '#eab308', note: 'Chân giữa biến trở gửi điện áp analog về A0' },
+      { fromCompId: 'bb', fromPinId: 'bot_minus_2', toCompId: 'pot', toPinId: 'gnd', color: '#111827', note: 'Nối đất GND cho biến trở' },
+
+      // Servo SG90
+      { fromCompId: 'bb', fromPinId: 'bot_plus_8', toCompId: 'servo', toPinId: 'vcc', color: '#dc2626', note: 'Dây Đỏ Servo nối vào 5V Breadboard' },
+      { fromCompId: 'bb', fromPinId: 'bot_minus_8', toCompId: 'servo', toPinId: 'gnd', color: '#111827', note: 'Dây Nâu Servo nối vào GND Breadboard' },
       { fromCompId: 'arduino', fromPinId: 'd9', toCompId: 'servo', toPinId: 'sig', color: '#f97316', note: 'Dây Cam Servo nối chân PWM D9 để điều khiển xung góc quay' },
     ],
     steps: [
-      'Bước 1: Nối chân VCC (chân 1) của Biến trở vào chân 5V của Arduino.',
-      'Bước 2: Nối chân GND (chân 3) của Biến trở vào chân GND của Arduino.',
-      'Bước 3: Nối chân Wiper (chân giữa số 2) của Biến trở vào cổng Analog A0 của Arduino.',
-      'Bước 4: Nối dây Nâu (GND) của Servo SG90 vào GND Arduino, dây Đỏ (VCC) vào 5V.',
-      'Bước 5: Nối dây Cam (Tín hiệu PWM) của Servo vào chân Digital ~9 có hỗ trợ PWM của Arduino.',
+      'Bước 1: Nối chân 5V và GND của Arduino vào thanh ray nguồn dưới của Breadboard.',
+      'Bước 2: Nối chân VCC (1) và GND (3) của Biến trở vào thanh ray 5V và GND của Breadboard.',
+      'Bước 3: Nối chân Wiper (chân giữa 2) của Biến trở vào cổng Analog A0 của Arduino.',
+      'Bước 4: Nối dây Nâu (GND) và dây Đỏ (VCC) của Servo SG90 vào thanh ray Breadboard tương ứng.',
+      'Bước 5: Nối dây Cam (Tín hiệu PWM) của Servo vào chân D9 (có hỗ trợ PWM) của Arduino.',
     ],
   },
   {
@@ -151,29 +168,78 @@ export const PREBUILT_RECIPES: AISchematicRecipe[] = [
     promptSample: 'Mạch báo động chống trộm phát hiện chuyển động bằng PIR, còi Buzzer và đèn LED',
     description: 'Hệ thống an ninh phát hiện chuyển động thân nhiệt hồng ngoại bằng cảm biến PIR. Khi có kẻ xâm nhập, còi báo động réo liên tục và đèn chớp cảnh báo.',
     components: [
-      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 180 },
-      { id: 'pir', type: 'pir', name: 'Cảm biến PIR HC-SR501', x: 450, y: 90 },
-      { id: 'buzzer', type: 'buzzer', name: 'Còi chíp Báo động', x: 600, y: 90 },
-      { id: 'led', type: 'led', name: 'Đèn LED Báo động', x: 720, y: 90, properties: { color: 'red' } },
-      { id: 'res', type: 'resistor', name: 'Điện trở 220Ω', x: 700, y: 220, properties: { resistance: 220 } },
+      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 160 },
+      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 160 },
+      { id: 'pir', type: 'pir', name: 'Cảm biến PIR HC-SR501', x: 460, y: 40 },
+      { id: 'buzzer', type: 'buzzer', name: 'Còi chíp Báo động', x: 610, y: 45 },
+      { id: 'res', type: 'resistor', name: 'Điện trở 220Ω', x: 710, y: 35, properties: { resistance: 220 } },
+      { id: 'led', type: 'led', name: 'Đèn LED Báo động', x: 770, y: 85, properties: { color: 'red' } },
     ],
     wires: [
-      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'pir', toPinId: 'vcc', color: '#dc2626', note: 'Nguồn 5V cấp cho PIR' },
-      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'pir', toPinId: 'gnd', color: '#111827', note: 'Nối đất GND cho PIR' },
-      { fromCompId: 'arduino', fromPinId: 'd2', toCompId: 'pir', toPinId: 'out', color: '#a855f7', note: 'Chân tín hiệu OUT PIR nối vào D2 (ngắt ngắt phát hiện)' },
+      // Master Power Rails
+      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'bb', toPinId: 'bot_plus_0', color: '#dc2626', note: 'Nguồn 5V cấp cho Breadboard rail (+)' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'bb', toPinId: 'bot_minus_0', color: '#111827', note: 'Nối đất GND cấp cho Breadboard rail (-)' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'bb', toPinId: 'top_minus_0', color: '#111827', note: 'Nối đất GND cấp cho Breadboard rail trên (-)' },
 
+      // PIR sensor
+      { fromCompId: 'bb', fromPinId: 'bot_plus_2', toCompId: 'pir', toPinId: 'vcc', color: '#dc2626', note: 'Cấp nguồn 5V cho PIR' },
+      { fromCompId: 'bb', fromPinId: 'bot_minus_2', toCompId: 'pir', toPinId: 'gnd', color: '#111827', note: 'Nối đất GND cho PIR' },
+      { fromCompId: 'pir', fromPinId: 'out', toCompId: 'arduino', toPinId: 'd2', color: '#a855f7', note: 'Chân tín hiệu OUT PIR nối vào D2 (ngắt ngắt phát hiện)' },
+
+      // Buzzer
       { fromCompId: 'arduino', fromPinId: 'd8', toCompId: 'buzzer', toPinId: 'pos', color: '#f59e0b', note: 'Kích hoạt còi báo động qua D8' },
-      { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'buzzer', toPinId: 'neg', color: '#111827', note: 'Chân âm còi nối GND' },
+      { fromCompId: 'buzzer', fromPinId: 'neg', toCompId: 'bb', toPinId: 'top_minus_6', color: '#111827', note: 'Chân âm còi nối ray GND' },
 
+      // LED
       { fromCompId: 'arduino', fromPinId: 'd13', toCompId: 'res', toPinId: 'pin1', color: '#ef4444', note: 'D13 nhấp nháy đèn báo động' },
       { fromCompId: 'res', fromPinId: 'pin2', toCompId: 'led', toPinId: 'anode', color: '#ef4444', note: 'Qua điện trở 220Ω vào Anode' },
-      { fromCompId: 'led', fromPinId: 'cathode', toCompId: 'buzzer', toPinId: 'neg', color: '#111827', note: 'Cathode LED về GND' },
+      { fromCompId: 'led', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_11', color: '#111827', note: 'Cathode LED về ray GND' },
     ],
     steps: [
-      'Bước 1: Cấp nguồn 5V và GND từ Arduino vào 2 chân VCC và GND của cảm biến PIR.',
-      'Bước 2: Nối chân OUT của PIR vào chân Digital 2 của Arduino để theo dõi tín hiệu.',
-      'Bước 3: Nối chân dương (+) còi Buzzer vào chân Digital 8, chân âm (-) vào GND.',
-      'Bước 4: Nối chân Digital 13 qua điện trở 220Ω vào chân Anode của LED Đỏ, chân Cathode về GND.',
+      'Bước 1: Cấp nguồn 5V và GND từ Arduino sang các thanh ray nguồn trên Breadboard.',
+      'Bước 2: Nối 2 chân VCC và GND của cảm biến PIR vào thanh ray nguồn Breadboard.',
+      'Bước 3: Nối chân OUT của PIR vào chân Digital 2 của Arduino để theo dõi tín hiệu.',
+      'Bước 4: Nối chân dương (+) còi Buzzer vào chân Digital 8, chân âm (-) vào ray GND.',
+      'Bước 5: Nối chân Digital 13 qua điện trở 220Ω vào chân Anode của LED Đỏ, chân Cathode về ray GND.',
+    ],
+  },
+  {
+    id: 'smart_street_light',
+    title: 'Đèn đường thông minh cảm biến quang trở LDR',
+    category: 'Cảm biến',
+    promptSample: 'Mạch đèn đường thông minh tự động bật sáng khi trời tối với quang trở LDR',
+    description: 'Hệ thống chiếu sáng tự động thông minh: Sử dụng quang trở LDR kết hợp điện trở 10kΩ tạo cầu phân áp, Arduino đo cường độ sáng môi trường và tự động bật đèn khi trời tối.',
+    components: [
+      { id: 'arduino', type: 'arduino_uno', name: 'Arduino Uno R3', x: 80, y: 160 },
+      { id: 'bb', type: 'breadboard', name: 'Breadboard Mini', x: 440, y: 160 },
+      { id: 'ldr', type: 'ldr', name: 'Cảm biến quang trở LDR', x: 470, y: 65, properties: { lightLevel: 70 } },
+      { id: 'r_div', type: 'resistor', name: 'Điện trở 10kΩ (Cầu phân áp)', x: 550, y: 35, properties: { resistance: 10000 } },
+      { id: 'r_led', type: 'resistor', name: 'Điện trở 220Ω (LED)', x: 680, y: 35, properties: { resistance: 220 } },
+      { id: 'led_street', type: 'led', name: 'Đèn đường LED Vàng', x: 730, y: 85, properties: { color: 'yellow' } },
+    ],
+    wires: [
+      // Master Power Rails
+      { fromCompId: 'arduino', fromPinId: '5v', toCompId: 'bb', toPinId: 'bot_plus_0', color: '#dc2626', note: 'Arduino 5V cấp nguồn thanh ray (+) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_bot1', toCompId: 'bb', toPinId: 'bot_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) dưới' },
+      { fromCompId: 'arduino', fromPinId: 'gnd_top', toCompId: 'bb', toPinId: 'top_minus_0', color: '#111827', note: 'Arduino GND nối đất thanh ray (-) trên' },
+
+      // LDR Voltage divider circuit
+      { fromCompId: 'bb', fromPinId: 'bot_plus_2', toCompId: 'ldr', toPinId: 'pin1', color: '#dc2626', note: 'Cấp nguồn 5V vào chân 1 quang trở LDR' },
+      { fromCompId: 'ldr', fromPinId: 'pin2', toCompId: 'arduino', toPinId: 'a0', color: '#eab308', note: 'Điểm giữa cầu phân áp gửi tín hiệu analog về A0' },
+      { fromCompId: 'ldr', fromPinId: 'pin2', toCompId: 'r_div', toPinId: 'pin1', color: '#eab308', note: 'Nối điểm giữa vào chân 1 điện trở 10kΩ' },
+      { fromCompId: 'r_div', fromPinId: 'pin2', toCompId: 'bb', toPinId: 'top_minus_5', color: '#111827', note: 'Chân 2 điện trở phân áp nối ray GND' },
+
+      // Street light LED
+      { fromCompId: 'arduino', fromPinId: 'd13', toCompId: 'r_led', toPinId: 'pin1', color: '#f59e0b', note: 'Chân D13 xuất lệnh bật đèn đường khi trời tối' },
+      { fromCompId: 'r_led', fromPinId: 'pin2', toCompId: 'led_street', toPinId: 'anode', color: '#f59e0b', note: 'Qua điện trở hạn dòng 220Ω vào Anode' },
+      { fromCompId: 'led_street', fromPinId: 'cathode', toCompId: 'bb', toPinId: 'top_minus_10', color: '#111827', note: 'Cathode LED về ray GND' },
+    ],
+    steps: [
+      'Bước 1: Cấp nguồn 5V và GND từ Arduino sang các thanh ray nguồn trên Breadboard.',
+      'Bước 2: Nối chân 1 của quang trở LDR vào thanh ray 5V.',
+      'Bước 3: Nối chân 2 của LDR vào cổng Analog A0 của Arduino và nối đồng thời vào chân 1 của điện trở 10kΩ.',
+      'Bước 4: Nối chân 2 của điện trở 10kΩ về thanh ray GND để hoàn thiện cầu phân áp.',
+      'Bước 5: Nối chân D13 qua điện trở hạn dòng 220Ω vào Anode của đèn LED, chân Cathode về ray GND.',
     ],
   },
 ];
@@ -200,6 +266,9 @@ export async function synthesizeCircuitFromPrompt(
   }
   if (normalized.includes('pir') || normalized.includes('trộm') || normalized.includes('chuyển động') || normalized.includes('security') || normalized.includes('báo động')) {
     return PREBUILT_RECIPES[4];
+  }
+  if (normalized.includes('ldr') || normalized.includes('quang trở') || normalized.includes('đèn đường') || normalized.includes('ánh sáng') || normalized.includes('trời tối') || normalized.includes('street light')) {
+    return PREBUILT_RECIPES[5];
   }
 
   // 2. If user provides API Key (OpenAI or Gemini), attempt live synthesis

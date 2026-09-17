@@ -141,6 +141,7 @@ export const AICircuitAssistant: React.FC<Props> = ({
             { id: 'pushbutton_led', label: '🔘 Nút bấm LED', query: 'Mạch nút nhấn điều khiển bật tắt đèn LED với Arduino Uno' },
             { id: 'servo_potentiometer', label: '⚙️ Servo & Biến trở', query: 'Điều khiển góc quay Servo SG90 bằng chiết áp biến trở' },
             { id: 'pir_motion_alarm', label: '🚨 Báo trộm PIR', query: 'Hệ thống báo động chống trộm cảm biến chuyển động PIR và còi' },
+            { id: 'smart_street_light', label: '💡 Đèn thông minh LDR', query: 'Mạch đèn đường thông minh tự động bật sáng khi trời tối với quang trở LDR' },
           ].map((item) => (
             <button
               key={item.id}

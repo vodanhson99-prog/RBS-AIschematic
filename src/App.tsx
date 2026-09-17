@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { CircuitComponent, ComponentType, LogEntry, SimulationState, Wire, AISchematicRecipe } from './types/circuit';
 import { createComponentInstance } from './data/componentDefinitions';
 import { CircuitCanvas } from './components/canvas/CircuitCanvas';
@@ -25,16 +25,16 @@ export const App: React.FC = () => {
       fromCompId: 'arduino_init',
       fromPinId: '5v',
       toCompId: 'breadboard_init',
-      toPinId: 'top_plus_0',
+      toPinId: 'bot_plus_0',
       color: '#ef4444',
       createdAt: Date.now(),
     },
     {
       id: 'wire_sample_2',
       fromCompId: 'arduino_init',
-      fromPinId: 'gnd_top',
+      fromPinId: 'gnd_bot1',
       toCompId: 'breadboard_init',
-      toPinId: 'top_minus_0',
+      toPinId: 'bot_minus_0',
       color: '#111827',
       createdAt: Date.now(),
     },
@@ -75,6 +75,8 @@ export const App: React.FC = () => {
     motionDetected: false,
     buttonPressed: false,
   });
+
+  const simTickRef = useRef(0);
 
   // API Key state for AI
   const [apiKey, setApiKey] = useState<string>('');
@@ -383,6 +385,7 @@ export const App: React.FC = () => {
   // Circuit Simulation Evaluation Loop
   useEffect(() => {
     if (!isSimulating) {
+      simTickRef.current = 0;
       setSimulationState({
         isRunning: false,
         activeLeds: {},
@@ -401,76 +404,146 @@ export const App: React.FC = () => {
 
     // Interval to simulate circuit state & reactions
     const interval = setInterval(() => {
-      // 1. Check Button states
+      simTickRef.current += 1;
+      const tick = simTickRef.current;
+
+      // 1. Identify interactive & sensor components
       const btnComp = components.find((c) => c.type === 'pushbutton');
       const isButtonPressed = btnComp?.properties?.isPressed || btnComp?.attributes?.isPressed || false;
 
-      // 2. Check Potentiometer voltage
       const potComp = components.find((c) => c.type === 'potentiometer');
       const potVal = potComp?.properties?.potValue ?? potComp?.attributes?.potValue ?? 512;
       const potVoltage = (potVal / 1023) * 5.0;
 
-      // 3. Servo Angle linked to Potentiometer or its own angle
       const servoComp = components.find((c) => c.type === 'servo');
       const servoAngle = potComp ? (potVal / 1023) * 180 : (servoComp?.properties?.angle ?? 90);
 
-      // 4. Ultrasonic Sensor distance
       const sonarComp = components.find((c) => c.type === 'ultrasonic');
       const dist = sonarComp?.properties?.distance ?? sonarComp?.attributes?.distance ?? 50;
 
-      // 5. PIR Sensor motion
       const pirComp = components.find((c) => c.type === 'pir');
       const isMotion = pirComp?.properties?.motionDetected ?? pirComp?.attributes?.motionDetected ?? false;
 
-      // 6. LDR Sensor light level
       const ldrComp = components.find((c) => c.type === 'ldr');
       const light = ldrComp?.properties?.lightLevel ?? ldrComp?.attributes?.lightLevel ?? 50;
 
-      // 7. Check LED lighting conditions
-      const activeLeds: Record<string, boolean> = {};
-      components.forEach((comp) => {
-        if (comp.type === 'led') {
-          // Check if anode and cathode are connected
-          const hasAnodeWire = wires.some(
-            (w) =>
-              (w.fromCompId === comp.id && w.fromPinId === 'anode') ||
-              (w.toCompId === comp.id && w.toPinId === 'anode')
-          );
-          const hasCathodeWire = wires.some(
-            (w) =>
-              (w.fromCompId === comp.id && w.fromPinId === 'cathode') ||
-              (w.toCompId === comp.id && w.toPinId === 'cathode')
-          );
+      const buzzerComp = components.find((c) => c.type === 'buzzer');
+      const ledComps = components.filter((c) => c.type === 'led');
 
-          if (hasAnodeWire && hasCathodeWire) {
-            // If button is in circuit or pressed, or proximity alert
-            if (!btnComp || isButtonPressed || dist < 30 || isMotion) {
-              activeLeds[comp.id] = true;
-            }
+      // Helper: check if a pin is wired
+      const isPinWired = (compId: string, pinId: string) =>
+        wires.some(
+          (w) =>
+            (w.fromCompId === compId && w.fromPinId === pinId) ||
+            (w.toCompId === compId && w.toPinId === pinId)
+        );
+
+      // Detect traffic light system (3 LEDs: red, yellow, green)
+      const redLed = ledComps.find(
+        (c) => c.id === 'led_red' || c.properties?.color === 'red'
+      );
+      const yellowLed = ledComps.find(
+        (c) => c.id === 'led_yellow' || c.properties?.color === 'yellow'
+      );
+      const greenLed = ledComps.find(
+        (c) => c.id === 'led_green' || c.properties?.color === 'green'
+      );
+      const isTrafficLight =
+        ledComps.length >= 3 &&
+        redLed &&
+        yellowLed &&
+        greenLed &&
+        !sonarComp &&
+        !pirComp &&
+        !ldrComp &&
+        !btnComp;
+
+      const activeLeds: Record<string, boolean> = {};
+
+      if (isTrafficLight && redLed && yellowLed && greenLed) {
+        // Traffic light sequence (200ms per tick):
+        // Total cycle = 40 ticks (~8 seconds):
+        // Ticks 0..16 (~3.4s): RED ON
+        // Ticks 17..21 (~1.0s): YELLOW ON
+        // Ticks 22..34 (~2.6s): GREEN ON
+        // Ticks 35..39 (~1.0s): YELLOW ON
+        const phase = tick % 40;
+        if (phase < 17) {
+          if (isPinWired(redLed.id, 'anode') && isPinWired(redLed.id, 'cathode')) {
+            activeLeds[redLed.id] = true;
+          }
+        } else if (phase >= 17 && phase < 22) {
+          if (isPinWired(yellowLed.id, 'anode') && isPinWired(yellowLed.id, 'cathode')) {
+            activeLeds[yellowLed.id] = true;
+          }
+        } else if (phase >= 22 && phase < 35) {
+          if (isPinWired(greenLed.id, 'anode') && isPinWired(greenLed.id, 'cathode')) {
+            activeLeds[greenLed.id] = true;
+          }
+        } else {
+          if (isPinWired(yellowLed.id, 'anode') && isPinWired(yellowLed.id, 'cathode')) {
+            activeLeds[yellowLed.id] = true;
           }
         }
-      });
+      } else {
+        // Evaluate each LED based on connected sensors / switches
+        ledComps.forEach((led) => {
+          const hasAnode = isPinWired(led.id, 'anode');
+          const hasCathode = isPinWired(led.id, 'cathode');
+          if (!hasAnode || !hasCathode) return;
 
-      // 8. Check Buzzer activation
-      const buzzerComp = components.find((c) => c.type === 'buzzer');
-      let buzzerActive = false;
-      if (buzzerComp) {
-        const hasPos = wires.some(
-          (w) =>
-            (w.fromCompId === buzzerComp.id && w.fromPinId === 'pos') ||
-            (w.toCompId === buzzerComp.id && w.toPinId === 'pos')
-        );
-        const hasNeg = wires.some(
-          (w) =>
-            (w.fromCompId === buzzerComp.id && w.fromPinId === 'neg') ||
-            (w.toCompId === buzzerComp.id && w.toPinId === 'neg')
-        );
-        buzzerActive = hasPos && hasNeg;
+          if (btnComp) {
+            // Pushbutton circuit: lights up when button pressed
+            if (isButtonPressed) {
+              activeLeds[led.id] = true;
+            }
+          } else if (sonarComp) {
+            // Ultrasonic warning LED: triggers when distance < 25cm
+            if (dist < 12) {
+              activeLeds[led.id] = true; // Solid danger
+            } else if (dist < 25) {
+              if (tick % 2 === 0) activeLeds[led.id] = true; // Flashing warning
+            }
+          } else if (pirComp) {
+            // PIR motion alarm LED: flashes when motion detected
+            if (isMotion) {
+              if (tick % 2 === 0) activeLeds[led.id] = true;
+            }
+          } else if (ldrComp) {
+            // LDR smart street light: lights up automatically when dark (<40%)
+            if (light < 40) {
+              activeLeds[led.id] = true;
+            }
+          } else {
+            // Static connected LED
+            activeLeds[led.id] = true;
+          }
+        });
       }
 
-      // Proximity alarm or motion alarm
-      const shouldBuzz = buzzerActive || (sonarComp && dist < 25) || (pirComp && isMotion);
-      const freq = dist < 15 ? 2000 : dist < 25 ? 1400 : 1000;
+      // Buzzer Activation & Pitch calculation
+      let shouldBuzz = false;
+      let freq = 1000;
+
+      if (buzzerComp && isPinWired(buzzerComp.id, 'pos') && isPinWired(buzzerComp.id, 'neg')) {
+        if (sonarComp) {
+          if (dist < 12) {
+            shouldBuzz = true;
+            freq = 2000; // Continuous high pitch danger alarm
+          } else if (dist < 25) {
+            shouldBuzz = tick % 2 === 0; // Pulsing beeps
+            freq = 1400;
+          }
+        } else if (pirComp) {
+          if (isMotion) {
+            shouldBuzz = tick % 2 === 0; // Intruder siren beeps
+            freq = 1600;
+          }
+        } else if (buzzerComp.properties?.active) {
+          shouldBuzz = true;
+          freq = 1000;
+        }
+      }
 
       if (shouldBuzz && !isMuted) {
         audioSynth.startBeep(freq);
@@ -490,7 +563,7 @@ export const App: React.FC = () => {
         motionDetected: isMotion,
         buttonPressed: isButtonPressed,
       });
-    }, 150);
+    }, 200);
 
     return () => {
       clearInterval(interval);
