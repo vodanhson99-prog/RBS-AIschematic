@@ -167,12 +167,14 @@ export interface SimulationState {
 }
 
 export type AIProvider = 'gemini' | 'openai' | 'anthropic' | 'deepseek' | 'kimi' | 'custom';
+export type KeyStorageMode = 'session' | 'local' | 'memory';
 
 export interface UserAISettings {
   provider: AIProvider;
   apiKey: string;
   model: string;
   customBaseUrl?: string;
+  storageMode?: KeyStorageMode;
 }
 
 export interface AIProviderMetadata {

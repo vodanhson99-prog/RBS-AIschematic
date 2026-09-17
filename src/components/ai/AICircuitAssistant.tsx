@@ -8,7 +8,8 @@ import {
   HelpCircle, 
   Layers, 
   AlertCircle,
-  Radio
+  Radio,
+  Lock
 } from 'lucide-react';
 import type { AISchematicRecipe, UserAISettings } from '../../types/circuit';
 import { synthesizeCircuitFromPrompt, AI_PROVIDERS_CONFIG } from '../../services/aiEngine';
@@ -91,12 +92,19 @@ export const AICircuitAssistant: React.FC<Props> = ({
             </div>
             <div className="flex items-center gap-2 mt-0.5">
               <p className="text-[11px] text-slate-400 truncate">Tự động nối chân theo prompt</p>
-              <span className={`text-[10px] font-medium px-1.5 py-0.2 rounded-full border ${
+              <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full border inline-flex items-center gap-1 ${
                 hasCustomKey 
                   ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/40' 
                   : 'bg-slate-800 text-slate-400 border-slate-700'
               }`}>
-                {hasCustomKey ? '● Live API' : '○ Heuristic'}
+                {hasCustomKey ? (
+                  <>
+                    <Lock className="w-2.5 h-2.5 text-emerald-400" />
+                    <span>Live API ({aiSettings.storageMode === 'session' ? 'Session' : 'Mã hóa'})</span>
+                  </>
+                ) : (
+                  <span>○ Heuristic</span>
+                )}
               </span>
             </div>
           </div>

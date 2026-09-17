@@ -9,7 +9,7 @@ import { WiringLogPanel } from './components/log/WiringLogPanel';
 import { AICircuitAssistant } from './components/ai/AICircuitAssistant';
 import { analyzePinSuggestions } from './services/suggestionEngine';
 import { audioSynth } from './services/audioSynthesizer';
-import { loadStoredAISettings } from './services/aiEngine';
+import { loadStoredAISettings, loadStoredAISettingsAsync } from './services/aiEngine';
 
 export const App: React.FC = () => {
   // Initial canvas state with Arduino Uno and Breadboard
@@ -81,6 +81,13 @@ export const App: React.FC = () => {
 
   // Multi-provider AI Settings state (Gemini, OpenAI, Claude, DeepSeek, Kimi, Custom)
   const [aiSettings, setAiSettings] = useState<UserAISettings>(() => loadStoredAISettings());
+
+  // Tải cấu hình AI bảo mật (giải mã AES-GCM tự động từ sessionStorage hoặc localStorage)
+  useEffect(() => {
+    loadStoredAISettingsAsync().then((decrypted) => {
+      setAiSettings(decrypted);
+    });
+  }, []);
 
   // Active side panel tab: 'ai' | 'log'
   const [activeSideTab, setActiveSideTab] = useState<'ai' | 'log'>('ai');

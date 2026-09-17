@@ -1,4 +1,5 @@
 import type { AISchematicRecipe, UserAISettings, AIProviderMetadata, AIProvider } from '../types/circuit';
+import { saveSecureAISettings, loadSecureAISettings } from './securityService';
 
 export const PREBUILT_RECIPES: AISchematicRecipe[] = [
   {
@@ -323,32 +324,55 @@ export const DEFAULT_AI_SETTINGS: UserAISettings = {
   apiKey: '',
   model: 'gemini-1.5-flash',
   customBaseUrl: '',
+  storageMode: 'session',
 };
 
-const STORAGE_KEY = 'ai_circuit_studio_ai_settings';
+// Bộ nhớ đệm trong RAM cho phiên làm việc hiện tại
+let memoryCachedSettings: UserAISettings = { ...DEFAULT_AI_SETTINGS };
+
+export function getMemoryCachedAISettings(): UserAISettings {
+  return memoryCachedSettings;
+}
+
+export function setMemoryCachedAISettings(settings: UserAISettings): void {
+  memoryCachedSettings = { ...settings };
+}
 
 export function loadStoredAISettings(): UserAISettings {
+  // Trả về bộ nhớ đệm RAM nếu đã có
+  if (memoryCachedSettings.apiKey) {
+    return memoryCachedSettings;
+  }
+
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem('ai_circuit_secure_vault_v2') || 
+                localStorage.getItem('ai_circuit_secure_vault_v2') ||
+                localStorage.getItem('ai_circuit_studio_ai_settings');
     if (!raw) return DEFAULT_AI_SETTINGS;
     const parsed = JSON.parse(raw);
     return {
       provider: parsed.provider || 'gemini',
-      apiKey: parsed.apiKey || '',
+      apiKey: parsed.apiKey || memoryCachedSettings.apiKey || '',
       model: parsed.model || AI_PROVIDERS_CONFIG[parsed.provider as AIProvider]?.defaultModel || 'gemini-1.5-flash',
       customBaseUrl: parsed.customBaseUrl || '',
+      storageMode: parsed.storageMode || 'session',
     };
   } catch {
     return DEFAULT_AI_SETTINGS;
   }
 }
 
+export async function loadStoredAISettingsAsync(): Promise<UserAISettings> {
+  const settings = await loadSecureAISettings(DEFAULT_AI_SETTINGS);
+  memoryCachedSettings = { ...settings };
+  return settings;
+}
+
 export function saveStoredAISettings(settings: UserAISettings): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  } catch (err) {
-    console.warn('Failed to persist AI settings:', err);
-  }
+  memoryCachedSettings = { ...settings };
+  saveSecureAISettings(settings).catch((err) => {
+    console.warn('Failed to securely persist AI settings:', err);
+  });
 }
 
 /**
@@ -401,10 +425,14 @@ QUY TẮC CỐT LÕI:
  */
 async function callGeminiLive(prompt: string, apiKey: string, model: string): Promise<AISchematicRecipe | null> {
   const modelName = model || 'gemini-1.5-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  // Truyền API key qua header bảo mật x-goog-api-key thay vì query param để tránh lộ trên URL/logs
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
     body: JSON.stringify({
       contents: [
         {
@@ -573,10 +601,14 @@ export async function testAIConnection(
     }
 
     if (provider === 'gemini') {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model || 'gemini-1.5-flash'}:generateContent?key=${apiKey}`;
+      const modelName = model || 'gemini-1.5-flash';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: testPrompt }] }],
           generationConfig: { maxOutputTokens: 50 },

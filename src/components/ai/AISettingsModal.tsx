@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   X, 
@@ -13,14 +13,28 @@ import {
   RefreshCw, 
   Sparkles,
   ShieldCheck,
-  Check
+  Check,
+  Lock,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  HardDrive,
+  Cpu as RamIcon,
+  AlertTriangle,
+  Info
 } from 'lucide-react';
-import type { UserAISettings, AIProvider } from '../../types/circuit';
+import type { UserAISettings, AIProvider, KeyStorageMode } from '../../types/circuit';
 import { 
   AI_PROVIDERS_CONFIG, 
   testAIConnection, 
   saveStoredAISettings 
 } from '../../services/aiEngine';
+import { 
+  maskApiKey, 
+  validateApiKeyFormat, 
+  clearAllStoredAISettings 
+} from '../../services/securityService';
 
 interface Props {
   isOpen: boolean;
@@ -37,6 +51,7 @@ export const AISettingsModal: React.FC<Props> = ({
 }) => {
   const [settings, setSettings] = useState<UserAISettings>(currentSettings);
   const [showKey, setShowKey] = useState(false);
+  const [autoHideCountdown, setAutoHideCountdown] = useState<number>(0);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{
     tested: boolean;
@@ -46,12 +61,22 @@ export const AISettingsModal: React.FC<Props> = ({
   } | null>(null);
   const [isCustomModel, setIsCustomModel] = useState(false);
   const [customModelInput, setCustomModelInput] = useState('');
+  const [showSecurityGuide, setShowSecurityGuide] = useState(false);
+  const [wipeNotice, setWipeNotice] = useState<string | null>(null);
+
+  const countdownTimerRef = useRef<any>(null);
 
   // Sync state when modal opens or currentSettings changes
   useEffect(() => {
     if (isOpen) {
-      setSettings(currentSettings);
+      setSettings({
+        ...currentSettings,
+        storageMode: currentSettings.storageMode || 'session',
+      });
       setTestResult(null);
+      setWipeNotice(null);
+      setShowKey(false);
+      setAutoHideCountdown(0);
       const meta = AI_PROVIDERS_CONFIG[currentSettings.provider];
       const isPreset = meta?.models.includes(currentSettings.model);
       setIsCustomModel(!isPreset);
@@ -59,9 +84,35 @@ export const AISettingsModal: React.FC<Props> = ({
     }
   }, [isOpen, currentSettings]);
 
+  // Bộ đếm ngược tự động ẩn API key sau 15s để chống nhìn trộm (shoulder-surfing)
+  useEffect(() => {
+    if (showKey) {
+      setAutoHideCountdown(15);
+      if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = setInterval(() => {
+        setAutoHideCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownTimerRef.current);
+            setShowKey(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+      setAutoHideCountdown(0);
+    }
+
+    return () => {
+      if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+    };
+  }, [showKey]);
+
   if (!isOpen) return null;
 
   const currentProviderMeta = AI_PROVIDERS_CONFIG[settings.provider] || AI_PROVIDERS_CONFIG['gemini'];
+  const validation = validateApiKeyFormat(settings.provider, settings.apiKey);
 
   const handleProviderChange = (providerId: AIProvider) => {
     const meta = AI_PROVIDERS_CONFIG[providerId];
@@ -91,6 +142,10 @@ export const AISettingsModal: React.FC<Props> = ({
     setCustomModelInput(val);
     setSettings(prev => ({ ...prev, model: val.trim() }));
     setTestResult(null);
+  };
+
+  const handleStorageModeChange = (mode: KeyStorageMode) => {
+    setSettings(prev => ({ ...prev, storageMode: mode }));
   };
 
   const handleTestConnection = async () => {
@@ -129,6 +184,24 @@ export const AISettingsModal: React.FC<Props> = ({
     onClose();
   };
 
+  const handleEmergencyWipe = () => {
+    if (window.confirm('Bạn có chắc muốn XÓA SẠCH toàn bộ API Key và dữ liệu mã hóa khỏi trình duyệt này ngay lập tức?')) {
+      clearAllStoredAISettings();
+      const wipedSettings: UserAISettings = {
+        provider: 'gemini',
+        apiKey: '',
+        model: 'gemini-1.5-flash',
+        customBaseUrl: '',
+        storageMode: 'session',
+      };
+      setSettings(wipedSettings);
+      onSaveSettings(wipedSettings);
+      setTestResult(null);
+      setWipeNotice('Đã xóa sạch mọi dữ liệu API Key khỏi trình duyệt!');
+      setTimeout(() => setWipeNotice(null), 4000);
+    }
+  };
+
   const handleReset = () => {
     const meta = AI_PROVIDERS_CONFIG['gemini'];
     const defaultSet: UserAISettings = {
@@ -136,6 +209,7 @@ export const AISettingsModal: React.FC<Props> = ({
       apiKey: '',
       model: meta.defaultModel,
       customBaseUrl: '',
+      storageMode: 'session',
     };
     setSettings(defaultSet);
     setIsCustomModel(false);
@@ -158,11 +232,28 @@ export const AISettingsModal: React.FC<Props> = ({
               <Sparkles style={{ width: 20, height: 20 }} />
             </div>
             <div>
-              <h3 className="ai-modal-title">
-                Cài Đặt Nhà Cung Cấp AI & API Key
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h3 className="ai-modal-title">
+                  Cài Đặt Nhà Cung Cấp AI & Bảo Mật API
+                </h3>
+                <span style={{ 
+                  fontSize: 10.5, 
+                  background: 'rgba(16, 185, 129, 0.15)', 
+                  color: '#34d399', 
+                  padding: '2px 8px', 
+                  borderRadius: 9999, 
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4
+                }}>
+                  <ShieldCheck style={{ width: 12, height: 12 }} />
+                  Zero-Server Direct TLS
+                </span>
+              </div>
               <p className="ai-modal-subtitle">
-                Tự do kết nối các mô hình AI hàng đầu: OpenAI, Anthropic, Gemini, DeepSeek, Kimi...
+                Kết nối trực tiếp client-side tới Google Gemini, OpenAI, Claude, DeepSeek, Kimi... Không lưu key qua máy chủ trung gian.
               </p>
             </div>
           </div>
@@ -178,6 +269,14 @@ export const AISettingsModal: React.FC<Props> = ({
         {/* Modal Body Scrollable */}
         <div className="ai-modal-body">
           
+          {/* Wipe Notice Alert */}
+          {wipeNotice && (
+            <div className="ai-test-banner success" style={{ marginBottom: 4 }}>
+              <CheckCircle2 style={{ width: 16, height: 16, color: '#34d399', flexShrink: 0 }} />
+              <span>{wipeNotice}</span>
+            </div>
+          )}
+
           {/* Section 1: Provider Selection Grid */}
           <div>
             <div className="ai-section-label">
@@ -287,14 +386,21 @@ export const AISettingsModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Section 3: API Key Input */}
+          {/* Section 3: API Key Input with Live Masking & Shoulder-Surfing Guard */}
           <div>
             <div className="ai-section-label">
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Key style={{ width: 14, height: 14, color: '#f59e0b' }} />
                 3. API Key {settings.provider === 'custom' ? '(Tùy chọn nếu Local)' : ''}
               </span>
+              {settings.apiKey && (
+                <span className="ai-key-masked-badge">
+                  <Lock style={{ width: 11, height: 11, color: '#38bdf8' }} />
+                  {maskApiKey(settings.apiKey)}
+                </span>
+              )}
             </div>
+
             <div className="ai-key-input-wrapper">
               <input
                 type={showKey ? 'text' : 'password'}
@@ -305,28 +411,102 @@ export const AISettingsModal: React.FC<Props> = ({
                   setTestResult(null);
                 }}
                 className="ai-key-input"
+                autoComplete="off"
+                spellCheck={false}
               />
               <button
                 type="button"
                 onClick={() => setShowKey(!showKey)}
                 className="ai-key-eye-btn"
-                title={showKey ? 'Ẩn khóa' : 'Hiện khóa'}
+                title={showKey ? 'Ẩn khóa ngay' : 'Hiện khóa (tự ẩn sau 15 giây)'}
               >
-                {showKey ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
+                {showKey ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#f59e0b' }}>
+                    <EyeOff style={{ width: 15, height: 15 }} />
+                    {autoHideCountdown > 0 ? `${autoHideCountdown}s` : ''}
+                  </span>
+                ) : (
+                  <Eye style={{ width: 16, height: 16 }} />
+                )}
               </button>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, fontSize: 11.5, color: '#94a3b8' }}>
-              <ShieldCheck style={{ width: 14, height: 14, color: '#10b981', flexShrink: 0 }} />
-              <span>Khóa API được mã hóa lưu trữ trong LocalStorage trình duyệt của bạn, gọi trực tiếp từ client không qua server.</span>
+
+            {/* Live Format Validation Warning */}
+            {validation.warning && (
+              <div className="ai-format-warning">
+                <AlertTriangle style={{ width: 14, height: 14, flexShrink: 0 }} />
+                <span>{validation.warning}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Section 4: Security Storage Mode */}
+          <div>
+            <div className="ai-section-label">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Lock style={{ width: 14, height: 14, color: '#10b981' }} />
+                4. Chế Độ Lưu Trữ Khóa (Storage Security Mode)
+              </span>
+            </div>
+
+            <div className="ai-storage-grid">
+              {/* Option A: Session Only */}
+              <div 
+                className={`ai-storage-card ${settings.storageMode === 'session' ? 'selected' : ''}`}
+                onClick={() => handleStorageModeChange('session')}
+              >
+                <div className="ai-storage-card-header">
+                  <span className="ai-storage-title">
+                    <Clock style={{ width: 14, height: 14, color: '#38bdf8' }} />
+                    Session Only
+                  </span>
+                  <span className="ai-storage-badge">Khuyên Dùng</span>
+                </div>
+                <p className="ai-storage-desc">
+                  Chỉ lưu trong phiên hiện tại. <strong>Tự động biến mất khi đóng tab</strong>. An toàn tuyệt đối trên máy mượn hoặc phòng học.
+                </p>
+              </div>
+
+              {/* Option B: Local Encrypted */}
+              <div 
+                className={`ai-storage-card ${settings.storageMode === 'local' ? 'selected' : ''}`}
+                onClick={() => handleStorageModeChange('local')}
+              >
+                <div className="ai-storage-card-header">
+                  <span className="ai-storage-title">
+                    <HardDrive style={{ width: 14, height: 14, color: '#a855f7' }} />
+                    Mã Hóa Trên Máy
+                  </span>
+                </div>
+                <p className="ai-storage-desc">
+                  Mã hóa <strong>AES-GCM 256-bit</strong> trong LocalStorage máy này. Tiện lợi không cần nhập lại khi mở lại web.
+                </p>
+              </div>
+
+              {/* Option C: Memory Only */}
+              <div 
+                className={`ai-storage-card ${settings.storageMode === 'memory' ? 'selected' : ''}`}
+                onClick={() => handleStorageModeChange('memory')}
+              >
+                <div className="ai-storage-card-header">
+                  <span className="ai-storage-title">
+                    <RamIcon style={{ width: 14, height: 14, color: '#f59e0b' }} />
+                    Chỉ Trong RAM
+                  </span>
+                </div>
+                <p className="ai-storage-desc">
+                  Hoàn toàn <strong>không ghi vào bộ nhớ trình duyệt</strong>. Khi reload hoặc đổi trang sẽ xóa sạch lập tức.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Section 4: Custom Base URL */}
+          {/* Section 5: Custom Base URL */}
           <div>
             <div className="ai-section-label">
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Globe style={{ width: 14, height: 14, color: '#818cf8' }} />
-                4. API Base URL (Proxy / Local Ollama / Cổng Custom)
+                5. API Base URL (Proxy / Local Ollama / Cổng Custom)
               </span>
             </div>
             <input
@@ -345,7 +525,61 @@ export const AISettingsModal: React.FC<Props> = ({
             </span>
           </div>
 
-          {/* Section 5: Connection Test Result Banner */}
+          {/* Section 6: Security Architectural Explainer (Accordion) */}
+          <div className="ai-security-guide">
+            <div 
+              className="ai-security-guide-header"
+              onClick={() => setShowSecurityGuide(!showSecurityGuide)}
+            >
+              <div className="ai-security-guide-title">
+                <ShieldCheck style={{ width: 16, height: 16, color: '#10b981' }} />
+                <span>Kiến trúc bảo mật API 4 tầng của AI Circuit Studio</span>
+              </div>
+              {showSecurityGuide ? (
+                <ChevronUp style={{ width: 16, height: 16, color: '#94a3b8' }} />
+              ) : (
+                <ChevronDown style={{ width: 16, height: 16, color: '#94a3b8' }} />
+              )}
+            </div>
+
+            {showSecurityGuide && (
+              <div className="ai-security-guide-content">
+                <div className="ai-security-item">
+                  <CheckCircle2 style={{ width: 14, height: 14, color: '#34d399', flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <strong>1. Trực tiếp Client-to-API (Zero Proxy)</strong>
+                    Toàn bộ request gửi trực tiếp từ trình duyệt bạn tới máy chủ của Google / OpenAI / Anthropic qua kênh mã hóa TLS/HTTPS. Không có server trung gian nào thu thập key.
+                  </div>
+                </div>
+
+                <div className="ai-security-item">
+                  <CheckCircle2 style={{ width: 14, height: 14, color: '#34d399', flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <strong>2. Xác thực bằng HTTP Header</strong>
+                    Truyền key độc quyền qua HTTP Header chuẩn (<code>x-goog-api-key</code>, <code>Authorization: Bearer</code>). Tuyệt đối không gắn key lên URL query để tránh lộ trong browser logs/proxy.
+                  </div>
+                </div>
+
+                <div className="ai-security-item">
+                  <CheckCircle2 style={{ width: 14, height: 14, color: '#34d399', flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <strong>3. Mã hóa phần cứng Web Crypto (AES-256)</strong>
+                    Khóa lưu trên máy được mã hóa với PBKDF2 và salt thiết bị ngẫu nhiên. Trích xuất thô LocalStorage không thể đọc được plaintext API key.
+                  </div>
+                </div>
+
+                <div className="ai-security-item">
+                  <Info style={{ width: 14, height: 14, color: '#38bdf8', flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <strong>4. Khuyến nghị thiết lập hạn mức (Spending Limit)</strong>
+                    Trên console của Google Cloud hoặc OpenAI, bạn nên giới hạn ngân sách hàng tháng mức $1 - $5 và giới hạn IP/HTTP Referrers để đảm bảo an toàn tối đa.
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Section 7: Connection Test Result Banner */}
           {testResult && testResult.tested && (
             <div className={`ai-test-banner ${testResult.success ? 'success' : 'error'}`}>
               {testResult.success ? (
@@ -366,7 +600,7 @@ export const AISettingsModal: React.FC<Props> = ({
 
         {/* Modal Footer */}
         <div className="ai-modal-footer">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={handleTestConnection}
@@ -376,6 +610,18 @@ export const AISettingsModal: React.FC<Props> = ({
               <RefreshCw className={isTesting ? 'animate-spin' : ''} style={{ width: 13, height: 13, color: '#38bdf8' }} />
               <span>{isTesting ? 'Đang kiểm tra...' : 'Kiểm tra kết nối'}</span>
             </button>
+
+            {settings.apiKey && (
+              <button
+                type="button"
+                onClick={handleEmergencyWipe}
+                className="ai-btn-danger"
+                title="Xóa sạch API Key và dữ liệu mã hóa khỏi máy ngay lập tức"
+              >
+                <Trash2 style={{ width: 13, height: 13 }} />
+                <span>Xóa sạch Key</span>
+              </button>
+            )}
 
             <button
               type="button"
