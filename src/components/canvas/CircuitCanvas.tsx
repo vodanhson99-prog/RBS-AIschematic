@@ -2,8 +2,12 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import type { CircuitComponent, Wire, PinSuggestion, SimulationState } from '../../types/circuit';
 import { ZoomIn, ZoomOut, RotateCcw, Trash2, RotateCw, Copy } from 'lucide-react';
 import { ArduinoUnoSvg } from './components/ArduinoUnoSvg';
+import { ArduinoMegaSvg } from './components/ArduinoMegaSvg';
+import { Esp32Svg } from './components/Esp32Svg';
+import { ArduinoNanoSvg } from './components/ArduinoNanoSvg';
 import { BreadboardSvg } from './components/BreadboardSvg';
 import { LedSvg } from './components/LedSvg';
+import { LedRgbSvg } from './components/LedRgbSvg';
 import { ResistorSvg } from './components/ResistorSvg';
 import { PushbuttonSvg } from './components/PushbuttonSvg';
 import { PotentiometerSvg } from './components/PotentiometerSvg';
@@ -12,6 +16,11 @@ import { BuzzerSvg } from './components/BuzzerSvg';
 import { ServoSvg } from './components/ServoSvg';
 import { PirSvg } from './components/PirSvg';
 import { LdrSvg } from './components/LdrSvg';
+import { Lcd1602Svg } from './components/Lcd1602Svg';
+import { OledI2cSvg } from './components/OledI2cSvg';
+import { RelayModuleSvg } from './components/RelayModuleSvg';
+import { Dht11Svg } from './components/Dht11Svg';
+import { JoystickSvg } from './components/JoystickSvg';
 import { WiresLayer } from './WiresLayer';
 
 interface Props {
@@ -432,8 +441,80 @@ export const CircuitCanvas: React.FC<Props> = ({
                 key={compId}
                 onMouseDown={(e) => handleCompMouseDown(compId, e)}
               >
-                {compType.includes('arduino') && (
+                {compType.includes('mega') && (
+                  <ArduinoMegaSvg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('esp32') && (
+                  <Esp32Svg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('nano') && (
+                  <ArduinoNanoSvg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('arduino') && !compType.includes('mega') && !compType.includes('nano') && (
                   <ArduinoUnoSvg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('lcd') && (
+                  <Lcd1602Svg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('oled') && (
+                  <OledI2cSvg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('relay') && (
+                  <RelayModuleSvg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('dht') && (
+                  <Dht11Svg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('rgb') && (
+                  <LedRgbSvg
+                    component={comp}
+                    isSelected={isSelected}
+                    onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
+                    highlightPinIds={highlightPinIds}
+                  />
+                )}
+                {compType.includes('joystick') && (
+                  <JoystickSvg
                     component={comp}
                     isSelected={isSelected}
                     onPinClick={(pinId, e) => handlePinClick(compId, pinId, e)}
@@ -448,7 +529,7 @@ export const CircuitCanvas: React.FC<Props> = ({
                     highlightPinIds={highlightPinIds}
                   />
                 )}
-                {compType.includes('led') && (
+                {compType.includes('led') && !compType.includes('rgb') && (
                   <LedSvg
                     component={comp}
                     isSelected={isSelected}

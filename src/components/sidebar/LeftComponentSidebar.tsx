@@ -15,6 +15,12 @@ import {
   Eye,
   Sun,
   Plus,
+  Monitor,
+  Zap,
+  Thermometer,
+  Palette,
+  Gamepad2,
+  Wifi,
 } from 'lucide-react';
 
 export interface CatalogItem {
@@ -32,7 +38,7 @@ export interface CatalogItem {
 }
 
 const CATALOG_ITEMS: CatalogItem[] = [
-  // 1. MCU
+  // 1. Vi điều khiển (MCU)
   {
     id: 'arduino_uno',
     type: 'arduino_uno',
@@ -45,6 +51,43 @@ const CATALOG_ITEMS: CatalogItem[] = [
     badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
     description: 'Bo mạch vi điều khiển 14 chân Digital (6 chân PWM) & 6 chân Analog',
   },
+  {
+    id: 'arduino_mega',
+    type: 'arduino_mega',
+    name: 'Arduino Mega 2560',
+    model: 'ATmega2560 R3',
+    category: 'mcu',
+    pinCount: 76,
+    icon: Cpu,
+    iconColor: 'text-indigo-400',
+    badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+    description: 'Bo mạch hiệu năng cao với 54 chân Digital, 16 chân Analog và 4 cổng UART',
+  },
+  {
+    id: 'esp32',
+    type: 'esp32',
+    name: 'ESP32 DevKit V1',
+    model: 'Dual-Core Wi-Fi/BT',
+    category: 'mcu',
+    pinCount: 30,
+    icon: Wifi,
+    iconColor: 'text-emerald-400',
+    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    description: 'SoC 32-bit Wi-Fi & Bluetooth 240MHz, 30 chân I/O hỗ trợ IoT và điều khiển 3.3V',
+  },
+  {
+    id: 'arduino_nano',
+    type: 'arduino_nano',
+    name: 'Arduino Nano V3',
+    model: 'ATmega328P DIP',
+    category: 'mcu',
+    pinCount: 30,
+    icon: Cpu,
+    iconColor: 'text-blue-400',
+    badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    description: 'Bo Arduino Uno thu nhỏ dạng cắm breadboard tiện lợi với 8 chân Analog',
+  },
+
   // 2. Boards
   {
     id: 'breadboard',
@@ -58,7 +101,56 @@ const CATALOG_ITEMS: CatalogItem[] = [
     badgeColor: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
     description: 'Bo cắm thử nghiệm linh kiện không cần hàn có 2 ray nguồn kép',
   },
-  // 3. Actuators & Outputs
+
+  // 3. Actuators & Outputs & Displays
+  {
+    id: 'lcd_1602_i2c',
+    type: 'lcd_1602_i2c',
+    name: 'Màn hình LCD 1602',
+    model: 'I2C PCF8574',
+    category: 'output',
+    pinCount: 4,
+    icon: Monitor,
+    iconColor: 'text-cyan-400',
+    badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+    description: 'Màn hình hiển thị 16 ký tự x 2 dòng giao tiếp I2C tiện lợi chỉ với 4 chân cắm',
+  },
+  {
+    id: 'oled_i2c',
+    type: 'oled_i2c',
+    name: 'Màn hình OLED 0.96"',
+    model: 'SSD1306 128x64',
+    category: 'output',
+    pinCount: 4,
+    icon: Monitor,
+    iconColor: 'text-sky-300',
+    badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+    description: 'Màn hình đồ hoạ OLED độ tương phản cao giao tiếp I2C (SCL / SDA)',
+  },
+  {
+    id: 'relay_module',
+    type: 'relay_module',
+    name: 'Module Rơ-le 5V',
+    model: '1-Channel Relay',
+    category: 'output',
+    pinCount: 6,
+    icon: Zap,
+    iconColor: 'text-blue-400',
+    badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    description: 'Rơ-le đóng cắt dòng điện tải lớn 220V/10A có cách ly quang an toàn',
+  },
+  {
+    id: 'led_rgb',
+    type: 'led_rgb',
+    name: 'Đèn LED RGB 4 Chân',
+    model: 'Common Cathode',
+    category: 'output',
+    pinCount: 4,
+    icon: Palette,
+    iconColor: 'text-purple-400',
+    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    description: 'Đèn LED đa màu kết hợp Đỏ - Xanh lá - Lam qua xung PWM tạo triệu màu sắc',
+  },
   {
     id: 'led_red',
     type: 'led',
@@ -122,7 +214,20 @@ const CATALOG_ITEMS: CatalogItem[] = [
     badgeColor: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
     description: 'Động cơ điều khiển góc quay chính xác 0° đến 180° bằng tín hiệu PWM',
   },
+
   // 4. Sensors
+  {
+    id: 'dht11',
+    type: 'dht11',
+    name: 'Cảm biến DHT11',
+    model: 'Nhiệt độ & Độ ẩm',
+    category: 'sensor',
+    pinCount: 4,
+    icon: Thermometer,
+    iconColor: 'text-blue-400',
+    badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    description: 'Cảm biến đo nhiệt độ (0-50°C) và độ ẩm không khí (20-90% RH) chuẩn 1-Wire',
+  },
   {
     id: 'ultrasonic',
     type: 'ultrasonic',
@@ -159,7 +264,20 @@ const CATALOG_ITEMS: CatalogItem[] = [
     badgeColor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
     description: 'Cảm biến ánh sáng có điện trở thay đổi nghịch biến theo độ rọi sáng',
   },
+
   // 5. Passives & Basic Inputs
+  {
+    id: 'joystick',
+    type: 'joystick',
+    name: 'Cần gạt Joystick 2 Trục',
+    model: 'PS2 Joystick XY',
+    category: 'passive',
+    pinCount: 5,
+    icon: Gamepad2,
+    iconColor: 'text-violet-400',
+    badgeColor: 'bg-violet-500/20 text-violet-300 border-violet-500/30',
+    description: 'Module điều hướng 2 trục Analog X-Y và 1 nút nhấn công tắc SW',
+  },
   {
     id: 'resistor_220',
     type: 'resistor',
@@ -214,8 +332,8 @@ const CATALOG_ITEMS: CatalogItem[] = [
 
 const CATEGORIES = [
   { id: 'all', label: 'Tất cả' },
-  { id: 'mcu', label: 'Arduino' },
-  { id: 'output', label: 'Đầu ra' },
+  { id: 'mcu', label: 'Vi điều khiển' },
+  { id: 'output', label: 'Đầu ra & Màn hình' },
   { id: 'sensor', label: 'Cảm biến' },
   { id: 'passive', label: 'Linh kiện' },
   { id: 'board', label: 'Bo cắm' },

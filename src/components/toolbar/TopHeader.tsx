@@ -41,7 +41,6 @@ export const TopHeader: React.FC<Props> = ({
             <h1 className="text-base font-extrabold tracking-tight text-slate-100">
               AI Circuit Studio
             </h1>
-            <span className="brand-version-badge">TinkerCAD + AI</span>
           </div>
           <span className="text-[11px] text-slate-400 font-medium truncate max-w-[240px]" title={projectTitle}>
             {projectTitle || 'Dự án mạch Arduino mới'}

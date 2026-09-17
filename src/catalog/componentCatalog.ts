@@ -141,6 +141,145 @@ export const COMPONENT_CATALOG: Record<string, ComponentBlueprint> = {
       createPin('term2b', '2B', 'PASSIVE', 48, 55, 'Cực 2B'),
     ],
   },
+
+  arduino_mega: {
+    modelId: 'arduino_mega',
+    name: 'Arduino Mega 2560 R3',
+    category: 'controller',
+    description: 'Vi điều khiển ATmega2560 với 54 chân Digital và 16 chân Analog',
+    dimensions: { width: 480, height: 250 },
+    pins: [
+      createPin('5v', '5V', 'VCC', 128, 224, '5V Main Supply', 5.0),
+      createPin('3v3', '3.3V', 'VCC', 114, 224, '3.3V Supply', 3.3),
+      createPin('gnd_top', 'GND', 'GND', 84, 16, 'Ground'),
+      createPin('gnd_bot1', 'GND 1', 'GND', 142, 224, 'Ground 1'),
+      createPin('gnd_bot2', 'GND 2', 'GND', 156, 224, 'Ground 2'),
+      createPin('d20', '20 (SDA)', 'I2C_SDA', 18, 16, 'I2C SDA'),
+      createPin('d21', '21 (SCL)', 'I2C_SCL', 32, 16, 'I2C SCL'),
+      createPin('d7', '7', 'DIGITAL', 190, 16, 'Digital 7'),
+      createPin('d13', '13', 'DIGITAL', 98, 16, 'Digital 13'),
+    ],
+  },
+
+  esp32: {
+    modelId: 'esp32',
+    name: 'ESP32 DevKit V1',
+    category: 'controller',
+    description: 'SoC 32-bit Wi-Fi & Bluetooth Dual Core 30 chân',
+    dimensions: { width: 220, height: 280 },
+    pins: [
+      createPin('3v3', '3V3', 'VCC', 19, 35, '3.3V Power Out', 3.3),
+      createPin('gnd_l', 'GND', 'GND', 19, 243, 'Ground Left'),
+      createPin('gnd_r', 'GND', 'GND', 201, 243, 'Ground Right'),
+      createPin('vin', 'VIN', 'VCC', 201, 259, '5V Input'),
+      createPin('d21', 'D21 (SDA)', 'I2C_SDA', 201, 99, 'I2C SDA'),
+      createPin('d22', 'D22 (SCL)', 'I2C_SCL', 201, 51, 'I2C SCL'),
+      createPin('d4', 'D4', 'DIGITAL', 201, 195, 'GPIO4'),
+      createPin('d2', 'D2', 'DIGITAL', 201, 211, 'GPIO2'),
+    ],
+  },
+
+  arduino_nano: {
+    modelId: 'arduino_nano',
+    name: 'Arduino Nano V3',
+    category: 'controller',
+    description: 'Bo mạch nhỏ gọn ATmega328P cắm breadboard',
+    dimensions: { width: 150, height: 280 },
+    pins: [
+      createPin('5v', '5V', 'VCC', 134, 211, '5V Power', 5.0),
+      createPin('gnd_l', 'GND', 'GND', 16, 83, 'Ground Left'),
+      createPin('gnd_r', 'GND', 'GND', 134, 243, 'Ground Right'),
+      createPin('d2', 'D2', 'DIGITAL', 16, 99, 'Digital Pin 2'),
+      createPin('d13', 'D13', 'DIGITAL', 134, 35, 'Digital Pin 13'),
+    ],
+  },
+
+  lcd_1602_i2c: {
+    modelId: 'lcd_1602_i2c',
+    name: 'Màn hình LCD 1602 I2C',
+    category: 'output',
+    description: 'Màn hình LCD 16x2 ký tự chuẩn giao tiếp I2C 4 chân',
+    dimensions: { width: 230, height: 130 },
+    pins: [
+      createPin('gnd', 'GND', 'GND', 78, 115, 'Ground'),
+      createPin('vcc', 'VCC', 'VCC', 104, 115, '5V Power', 5.0),
+      createPin('sda', 'SDA', 'I2C_SDA', 130, 115, 'I2C SDA'),
+      createPin('scl', 'SCL', 'I2C_SCL', 156, 115, 'I2C SCL'),
+    ],
+  },
+
+  oled_i2c: {
+    modelId: 'oled_i2c',
+    name: 'Màn hình OLED 0.96" I2C SSD1306',
+    category: 'output',
+    description: 'Màn hình OLED 128x64 pixels giao tiếp I2C',
+    dimensions: { width: 120, height: 120 },
+    pins: [
+      createPin('gnd', 'GND', 'GND', 35, 13, 'Ground'),
+      createPin('vcc', 'VCC', 'VCC', 52, 13, 'Power 3.3V-5V', 3.3),
+      createPin('scl', 'SCL', 'I2C_SCL', 69, 13, 'I2C SCL'),
+      createPin('sda', 'SDA', 'I2C_SDA', 86, 13, 'I2C SDA'),
+    ],
+  },
+
+  relay_module: {
+    modelId: 'relay_module',
+    name: 'Module Rơ-le 5V 1 Kênh',
+    category: 'output',
+    description: 'Rơ-le cách ly quang đóng ngắt dòng điện tải lớn',
+    dimensions: { width: 160, height: 105 },
+    pins: [
+      createPin('vcc', 'VCC', 'VCC', 145, 35, '5V Power', 5.0),
+      createPin('gnd', 'GND', 'GND', 145, 55, 'Ground'),
+      createPin('in', 'IN', 'DIGITAL', 145, 75, 'Control Signal'),
+      createPin('no', 'NO', 'PASSIVE', 15, 30, 'Normally Open'),
+      createPin('com', 'COM', 'PASSIVE', 15, 50, 'Common'),
+      createPin('nc', 'NC', 'PASSIVE', 15, 70, 'Normally Closed'),
+    ],
+  },
+
+  dht11: {
+    modelId: 'dht11',
+    name: 'Cảm biến DHT11',
+    category: 'sensor',
+    description: 'Cảm biến đo nhiệt độ và độ ẩm kỹ thuật số 1-Wire',
+    dimensions: { width: 90, height: 110 },
+    pins: [
+      createPin('vcc', 'VCC', 'VCC', 20, 95, 'Power 3.3V-5V', 5.0),
+      createPin('data', 'DATA', 'DIGITAL', 36, 95, '1-Wire Data'),
+      createPin('nc', 'NC', 'PASSIVE', 54, 95, 'No Connection'),
+      createPin('gnd', 'GND', 'GND', 70, 95, 'Ground'),
+    ],
+  },
+
+  led_rgb: {
+    modelId: 'led_rgb',
+    name: 'Đèn LED RGB 4 Chân',
+    category: 'output',
+    description: 'Đèn LED phát quang 3 màu Red-Green-Blue Cathode chung',
+    dimensions: { width: 70, height: 95 },
+    pins: [
+      createPin('red', 'R', 'PWM', 16, 78, 'Red Anode'),
+      createPin('cathode', 'GND', 'GND', 28, 78, 'Common Cathode'),
+      createPin('green', 'G', 'PWM', 42, 78, 'Green Anode'),
+      createPin('blue', 'B', 'PWM', 54, 78, 'Blue Anode'),
+    ],
+  },
+
+  joystick: {
+    modelId: 'joystick',
+    name: 'Module Joystick 2 Trục',
+    category: 'input',
+    description: 'Cần gạt điều hướng 2 trục Analog và 1 công tắc nút bấm',
+    dimensions: { width: 120, height: 120 },
+    pins: [
+      createPin('gnd', 'GND', 'GND', 26, 105, 'Ground'),
+      createPin('vcc', '+5V', 'VCC', 43, 105, '5V Power', 5.0),
+      createPin('vrx', 'VRX', 'ANALOG', 60, 105, 'Analog X-axis'),
+      createPin('vry', 'VRY', 'ANALOG', 77, 105, 'Analog Y-axis'),
+      createPin('sw', 'SW', 'DIGITAL', 94, 105, 'Push Button Switch'),
+    ],
+  },
 };
 
 let instanceCounter = 1;

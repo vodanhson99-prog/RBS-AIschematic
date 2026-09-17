@@ -17,6 +17,12 @@ dist-ssr
 *.pem
 *.key
 
+# Next.js
+.next/
+out/
+build/
+*.tsbuildinfo
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

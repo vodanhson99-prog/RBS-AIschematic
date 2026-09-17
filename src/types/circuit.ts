@@ -151,7 +151,19 @@ export interface AISchematicRecipe {
     note?: string;
   }>;
   steps: string[];
+  changeSummary?: string[];
 }
+
+export interface AgentTurn {
+  id: string;
+  userPrompt: string;
+  timestamp: number;
+  status: 'idle' | 'running' | 'success' | 'error';
+  recipe?: AISchematicRecipe;
+  changeSummary?: string[];
+  errorMessage?: string;
+}
+
 
 export interface SimulationState {
   isRunning: boolean;
@@ -189,4 +201,12 @@ export interface AIProviderMetadata {
   docUrl: string;
   description: string;
 }
+
+export interface AIChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: number;
+}
+
 

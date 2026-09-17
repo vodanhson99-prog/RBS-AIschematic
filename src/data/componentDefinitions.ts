@@ -272,6 +272,220 @@ export function createComponentInstance(
       return buildComponent(id, type, 'Cảm biến quang trở (LDR)', x, y, pins, { lightLevel: 65, ...customProps });
     }
 
+    case 'arduino_mega': {
+      const pins: Pin[] = [
+        // Digital 0-21 (Top header from right to left)
+        { id: 'd0', name: '0 (RX0)', label: 'RX0', type: 'digital', x: 410, y: 16, description: 'Digital Pin 0 / Serial 0 RX' },
+        { id: 'd1', name: '1 (TX0)', label: 'TX0', type: 'digital', x: 396, y: 16, description: 'Digital Pin 1 / Serial 0 TX' },
+        { id: 'd2', name: '~2 (PWM)', label: '~2', type: 'pwm', x: 382, y: 16, description: 'Digital Pin 2 (PWM)' },
+        { id: 'd3', name: '~3 (PWM)', label: '~3', type: 'pwm', x: 368, y: 16, description: 'Digital Pin 3 (PWM)' },
+        { id: 'd4', name: '~4 (PWM)', label: '~4', type: 'pwm', x: 354, y: 16, description: 'Digital Pin 4 (PWM)' },
+        { id: 'd5', name: '~5 (PWM)', label: '~5', type: 'pwm', x: 340, y: 16, description: 'Digital Pin 5 (PWM)' },
+        { id: 'd6', name: '~6 (PWM)', label: '~6', type: 'pwm', x: 326, y: 16, description: 'Digital Pin 6 (PWM)' },
+        { id: 'd7', name: '~7 (PWM)', label: '~7', type: 'pwm', x: 312, y: 16, description: 'Digital Pin 7 (PWM)' },
+        { id: 'd8', name: '~8 (PWM)', label: '~8', type: 'pwm', x: 298, y: 16, description: 'Digital Pin 8 (PWM)' },
+        { id: 'd9', name: '~9 (PWM)', label: '~9', type: 'pwm', x: 284, y: 16, description: 'Digital Pin 9 (PWM)' },
+        { id: 'd10', name: '~10 (PWM)', label: '~10', type: 'pwm', x: 270, y: 16, description: 'Digital Pin 10 (PWM)' },
+        { id: 'd11', name: '~11 (PWM)', label: '~11', type: 'pwm', x: 256, y: 16, description: 'Digital Pin 11 (PWM)' },
+        { id: 'd12', name: '~12 (PWM)', label: '~12', type: 'pwm', x: 242, y: 16, description: 'Digital Pin 12 (PWM)' },
+        { id: 'd13', name: '~13 (PWM)', label: '~13', type: 'pwm', x: 228, y: 16, description: 'Digital Pin 13 (PWM / Built-in LED)' },
+        { id: 'gnd_top', name: 'GND', label: 'GND', type: 'gnd', x: 214, y: 16, description: 'Ground' },
+        { id: 'aref', name: 'AREF', label: 'AREF', type: 'passive', x: 200, y: 16, description: 'Analog Reference' },
+        { id: 'sda20', name: 'SDA (20)', label: 'SDA', type: 'digital', x: 186, y: 16, description: 'I2C SDA / Pin 20' },
+        { id: 'scl21', name: 'SCL (21)', label: 'SCL', type: 'digital', x: 172, y: 16, description: 'I2C SCL / Pin 21' },
+
+        // Power & Analog Header (Bottom)
+        { id: 'rst', name: 'RESET', label: 'RST', type: 'passive', x: 100, y: 224, description: 'Reset Pin' },
+        { id: '3v3', name: '3.3V', label: '3.3V', type: 'power', x: 114, y: 224, description: '3.3V Output' },
+        { id: '5v', name: '5V', label: '5V', type: 'power', x: 128, y: 224, description: '5V Output (Main Supply)' },
+        { id: 'gnd_bot1', name: 'GND 1', label: 'GND', type: 'gnd', x: 142, y: 224, description: 'Ground 1' },
+        { id: 'gnd_bot2', name: 'GND 2', label: 'GND', type: 'gnd', x: 156, y: 224, description: 'Ground 2' },
+        { id: 'vin', name: 'VIN', label: 'VIN', type: 'power', x: 170, y: 224, description: 'Voltage Input' },
+
+        // Analog 0-15 (Bottom right)
+        { id: 'a0', name: 'A0', label: 'A0', type: 'analog', x: 200, y: 224, description: 'Analog Input 0' },
+        { id: 'a1', name: 'A1', label: 'A1', type: 'analog', x: 214, y: 224, description: 'Analog Input 1' },
+        { id: 'a2', name: 'A2', label: 'A2', type: 'analog', x: 228, y: 224, description: 'Analog Input 2' },
+        { id: 'a3', name: 'A3', label: 'A3', type: 'analog', x: 242, y: 224, description: 'Analog Input 3' },
+        { id: 'a4', name: 'A4', label: 'A4', type: 'analog', x: 256, y: 224, description: 'Analog Input 4' },
+        { id: 'a5', name: 'A5', label: 'A5', type: 'analog', x: 270, y: 224, description: 'Analog Input 5' },
+        { id: 'a6', name: 'A6', label: 'A6', type: 'analog', x: 284, y: 224, description: 'Analog Input 6' },
+        { id: 'a7', name: 'A7', label: 'A7', type: 'analog', x: 298, y: 224, description: 'Analog Input 7' },
+        { id: 'a8', name: 'A8', label: 'A8', type: 'analog', x: 312, y: 224, description: 'Analog Input 8' },
+        { id: 'a9', name: 'A9', label: 'A9', type: 'analog', x: 326, y: 224, description: 'Analog Input 9' },
+        { id: 'a10', name: 'A10', label: 'A10', type: 'analog', x: 340, y: 224, description: 'Analog Input 10' },
+        { id: 'a11', name: 'A11', label: 'A11', type: 'analog', x: 354, y: 224, description: 'Analog Input 11' },
+        { id: 'a12', name: 'A12', label: 'A12', type: 'analog', x: 368, y: 224, description: 'Analog Input 12' },
+        { id: 'a13', name: 'A13', label: 'A13', type: 'analog', x: 382, y: 224, description: 'Analog Input 13' },
+        { id: 'a14', name: 'A14', label: 'A14', type: 'analog', x: 396, y: 224, description: 'Analog Input 14' },
+        { id: 'a15', name: 'A15', label: 'A15', type: 'analog', x: 410, y: 224, description: 'Analog Input 15' },
+
+        // Extra Digital Pins 22-53 (Far Right Double Header)
+        { id: 'd22', name: 'D22', label: '22', type: 'digital', x: 433, y: 40, description: 'Digital Pin 22' },
+        { id: 'd24', name: 'D24', label: '24', type: 'digital', x: 433, y: 55, description: 'Digital Pin 24' },
+        { id: 'd26', name: 'D26', label: '26', type: 'digital', x: 433, y: 70, description: 'Digital Pin 26' },
+        { id: 'd28', name: 'D28', label: '28', type: 'digital', x: 433, y: 85, description: 'Digital Pin 28' },
+        { id: 'd30', name: 'D30', label: '30', type: 'digital', x: 433, y: 100, description: 'Digital Pin 30' },
+        { id: 'd32', name: 'D32', label: '32', type: 'digital', x: 433, y: 115, description: 'Digital Pin 32' },
+        { id: 'd34', name: 'D34', label: '34', type: 'digital', x: 433, y: 130, description: 'Digital Pin 34' },
+        { id: 'd36', name: 'D36', label: '36', type: 'digital', x: 433, y: 145, description: 'Digital Pin 36' },
+        { id: 'd38', name: 'D38', label: '38', type: 'digital', x: 433, y: 160, description: 'Digital Pin 38' },
+        { id: 'd40', name: 'D40', label: '40', type: 'digital', x: 433, y: 175, description: 'Digital Pin 40' },
+        { id: 'd42', name: 'D42', label: '42', type: 'digital', x: 433, y: 190, description: 'Digital Pin 42' },
+        { id: 'd44', name: '~44 (PWM)', label: '~44', type: 'pwm', x: 445, y: 40, description: 'Digital Pin 44 (PWM)' },
+        { id: 'd46', name: '~46 (PWM)', label: '~46', type: 'pwm', x: 445, y: 55, description: 'Digital Pin 46 (PWM)' },
+        { id: 'd48', name: 'D48', label: '48', type: 'digital', x: 445, y: 70, description: 'Digital Pin 48' },
+        { id: 'd50', name: 'D50 (MISO)', label: '50', type: 'digital', x: 445, y: 85, description: 'Digital Pin 50 (SPI MISO)' },
+        { id: 'd51', name: 'D51 (MOSI)', label: '51', type: 'digital', x: 445, y: 100, description: 'Digital Pin 51 (SPI MOSI)' },
+        { id: 'd52', name: 'D52 (SCK)', label: '52', type: 'digital', x: 445, y: 115, description: 'Digital Pin 52 (SPI SCK)' },
+        { id: 'd53', name: 'D53 (SS)', label: '53', type: 'digital', x: 445, y: 130, description: 'Digital Pin 53 (SPI SS)' },
+        { id: 'gnd_r1', name: 'GND', label: 'GND', type: 'gnd', x: 445, y: 145, description: 'Ground' },
+        { id: '5v_r1', name: '5V', label: '5V', type: 'power', x: 445, y: 160, description: '5V Supply' },
+      ];
+      return buildComponent(id, type, 'Arduino Mega 2560 R3', x, y, pins, {});
+    }
+
+    case 'esp32': {
+      const pins: Pin[] = [
+        // Left Column (15 pins from top to bottom)
+        { id: '3v3', name: '3V3', label: '3V3', type: 'power', x: 19, y: 35, description: '3.3V Power Out' },
+        { id: 'en', name: 'EN (RST)', label: 'EN', type: 'passive', x: 19, y: 51, description: 'Enable / Chip Reset' },
+        { id: 'vp', name: 'VP (GPIO36)', label: 'VP', type: 'analog', x: 19, y: 67, description: 'GPIO36 / ADC1_CH0 (Input only)' },
+        { id: 'vn', name: 'VN (GPIO39)', label: 'VN', type: 'analog', x: 19, y: 83, description: 'GPIO39 / ADC1_CH3 (Input only)' },
+        { id: 'd34', name: 'D34 (GPIO34)', label: 'D34', type: 'analog', x: 19, y: 99, description: 'GPIO34 / ADC1_CH6 (Input only)' },
+        { id: 'd35', name: 'D35 (GPIO35)', label: 'D35', type: 'analog', x: 19, y: 115, description: 'GPIO35 / ADC1_CH7 (Input only)' },
+        { id: 'd32', name: 'D32 (GPIO32)', label: 'D32', type: 'digital', x: 19, y: 131, description: 'GPIO32 / Touch9 / ADC1_CH4' },
+        { id: 'd33', name: 'D33 (GPIO33)', label: 'D33', type: 'digital', x: 19, y: 147, description: 'GPIO33 / Touch8 / ADC1_CH5' },
+        { id: 'd25', name: 'D25 (GPIO25)', label: 'D25', type: 'digital', x: 19, y: 163, description: 'GPIO25 / DAC1 / ADC2_CH8' },
+        { id: 'd26', name: 'D26 (GPIO26)', label: 'D26', type: 'digital', x: 19, y: 179, description: 'GPIO26 / DAC2 / ADC2_CH9' },
+        { id: 'd27', name: 'D27 (GPIO27)', label: 'D27', type: 'digital', x: 19, y: 195, description: 'GPIO27 / Touch7 / ADC2_CH7' },
+        { id: 'd14', name: 'D14 (GPIO14)', label: 'D14', type: 'pwm', x: 19, y: 211, description: 'GPIO14 / Touch6 / HS2_CLK' },
+        { id: 'd12', name: 'D12 (GPIO12)', label: 'D12', type: 'pwm', x: 19, y: 227, description: 'GPIO12 / Touch5 / HS2_DATA2' },
+        { id: 'gnd_l', name: 'GND', label: 'GND', type: 'gnd', x: 19, y: 243, description: 'Ground' },
+        { id: 'd13', name: 'D13 (GPIO13)', label: 'D13', type: 'pwm', x: 19, y: 259, description: 'GPIO13 / Touch4 / HS2_DATA3' },
+
+        // Right Column (15 pins from top to bottom)
+        { id: 'd23', name: 'D23 (MOSI)', label: 'D23', type: 'digital', x: 201, y: 35, description: 'GPIO23 / VSPI MOSI' },
+        { id: 'd22', name: 'D22 (SCL)', label: 'D22', type: 'digital', x: 201, y: 51, description: 'GPIO22 / I2C SCL' },
+        { id: 'tx0', name: 'TX0 (GPIO1)', label: 'TX0', type: 'digital', x: 201, y: 67, description: 'GPIO1 / UART0 TX' },
+        { id: 'rx0', name: 'RX0 (GPIO3)', label: 'RX0', type: 'digital', x: 201, y: 83, description: 'GPIO3 / UART0 RX' },
+        { id: 'd21', name: 'D21 (SDA)', label: 'D21', type: 'digital', x: 201, y: 99, description: 'GPIO21 / I2C SDA' },
+        { id: 'd19', name: 'D19 (MISO)', label: 'D19', type: 'digital', x: 201, y: 115, description: 'GPIO19 / VSPI MISO' },
+        { id: 'd18', name: 'D18 (SCK)', label: 'D18', type: 'digital', x: 201, y: 131, description: 'GPIO18 / VSPI SCK' },
+        { id: 'd5', name: 'D5 (SS)', label: 'D5', type: 'digital', x: 201, y: 147, description: 'GPIO5 / VSPI SS' },
+        { id: 'tx2', name: 'TX2 (GPIO17)', label: 'TX2', type: 'digital', x: 201, y: 163, description: 'GPIO17 / UART2 TX' },
+        { id: 'rx2', name: 'RX2 (GPIO16)', label: 'RX2', type: 'digital', x: 201, y: 179, description: 'GPIO16 / UART2 RX' },
+        { id: 'd4', name: 'D4 (GPIO4)', label: 'D4', type: 'digital', x: 201, y: 195, description: 'GPIO4 / Touch0 / ADC2_CH0' },
+        { id: 'd2', name: 'D2 (LED)', label: 'D2', type: 'digital', x: 201, y: 211, description: 'GPIO2 / Onboard Blue LED' },
+        { id: 'd15', name: 'D15 (GPIO15)', label: 'D15', type: 'digital', x: 201, y: 227, description: 'GPIO15 / Touch3 / HS2_CMD' },
+        { id: 'gnd_r', name: 'GND', label: 'GND', type: 'gnd', x: 201, y: 243, description: 'Ground' },
+        { id: 'vin', name: 'VIN (5V)', label: 'VIN', type: 'power', x: 201, y: 259, description: 'VIN Input (5V)' },
+      ];
+      return buildComponent(id, type, 'ESP32 DevKit V1', x, y, pins, {});
+    }
+
+    case 'arduino_nano': {
+      const pins: Pin[] = [
+        // Left Header (Top to bottom)
+        { id: 'd1_tx', name: 'TX (D1)', label: 'TX', type: 'digital', x: 16, y: 35, description: 'TX / Digital 1' },
+        { id: 'd0_rx', name: 'RX (D0)', label: 'RX', type: 'digital', x: 16, y: 51, description: 'RX / Digital 0' },
+        { id: 'rst_l', name: 'RST', label: 'RST', type: 'passive', x: 16, y: 67, description: 'Reset' },
+        { id: 'gnd_l', name: 'GND', label: 'GND', type: 'gnd', x: 16, y: 83, description: 'Ground' },
+        { id: 'd2', name: 'D2', label: 'D2', type: 'digital', x: 16, y: 99, description: 'Digital Pin 2' },
+        { id: 'd3', name: '~D3', label: '~3', type: 'pwm', x: 16, y: 115, description: 'Digital Pin 3 (PWM)' },
+        { id: 'd4', name: 'D4', label: 'D4', type: 'digital', x: 16, y: 131, description: 'Digital Pin 4' },
+        { id: 'd5', name: '~D5', label: '~5', type: 'pwm', x: 16, y: 147, description: 'Digital Pin 5 (PWM)' },
+        { id: 'd6', name: '~D6', label: '~6', type: 'pwm', x: 16, y: 163, description: 'Digital Pin 6 (PWM)' },
+        { id: 'd7', name: 'D7', label: 'D7', type: 'digital', x: 16, y: 179, description: 'Digital Pin 7' },
+        { id: 'd8', name: 'D8', label: 'D8', type: 'digital', x: 16, y: 195, description: 'Digital Pin 8' },
+        { id: 'd9', name: '~D9', label: '~9', type: 'pwm', x: 16, y: 211, description: 'Digital Pin 9 (PWM)' },
+        { id: 'd10', name: '~D10', label: '~10', type: 'pwm', x: 16, y: 227, description: 'Digital Pin 10 (PWM)' },
+        { id: 'd11', name: '~D11', label: '~11', type: 'pwm', x: 16, y: 243, description: 'Digital Pin 11 (PWM)' },
+        { id: 'd12', name: 'D12', label: '12', type: 'digital', x: 16, y: 259, description: 'Digital Pin 12' },
+
+        // Right Header (Top to bottom)
+        { id: 'd13', name: 'D13', label: '13', type: 'digital', x: 134, y: 35, description: 'Digital Pin 13' },
+        { id: '3v3', name: '3V3', label: '3V3', type: 'power', x: 134, y: 51, description: '3.3V Output' },
+        { id: 'ref', name: 'AREF', label: 'REF', type: 'passive', x: 134, y: 67, description: 'Analog Reference' },
+        { id: 'a0', name: 'A0', label: 'A0', type: 'analog', x: 134, y: 83, description: 'Analog Input 0' },
+        { id: 'a1', name: 'A1', label: 'A1', type: 'analog', x: 134, y: 99, description: 'Analog Input 1' },
+        { id: 'a2', name: 'A2', label: 'A2', type: 'analog', x: 134, y: 115, description: 'Analog Input 2' },
+        { id: 'a3', name: 'A3', label: 'A3', type: 'analog', x: 134, y: 131, description: 'Analog Input 3' },
+        { id: 'a4', name: 'A4 (SDA)', label: 'A4', type: 'analog', x: 134, y: 147, description: 'Analog 4 / I2C SDA' },
+        { id: 'a5', name: 'A5 (SCL)', label: 'A5', type: 'analog', x: 134, y: 163, description: 'Analog 5 / I2C SCL' },
+        { id: 'a6', name: 'A6', label: 'A6', type: 'analog', x: 134, y: 179, description: 'Analog Input 6' },
+        { id: 'a7', name: 'A7', label: 'A7', type: 'analog', x: 134, y: 195, description: 'Analog Input 7' },
+        { id: '5v', name: '5V', label: '5V', type: 'power', x: 134, y: 211, description: '5V Power' },
+        { id: 'rst_r', name: 'RST', label: 'RST', type: 'passive', x: 134, y: 227, description: 'Reset' },
+        { id: 'gnd_r', name: 'GND', label: 'GND', type: 'gnd', x: 134, y: 243, description: 'Ground' },
+        { id: 'vin', name: 'VIN', label: 'VIN', type: 'power', x: 134, y: 259, description: 'VIN Input (7-12V)' },
+      ];
+      return buildComponent(id, type, 'Arduino Nano V3', x, y, pins, {});
+    }
+
+    case 'lcd_1602_i2c': {
+      const pins: Pin[] = [
+        { id: 'gnd', name: 'GND', label: 'GND', type: 'gnd', x: 78, y: 115, description: 'Nối đất GND' },
+        { id: 'vcc', name: 'VCC (+5V)', label: 'VCC', type: 'power', x: 104, y: 115, description: 'Cấp nguồn 5V' },
+        { id: 'sda', name: 'SDA', label: 'SDA', type: 'digital', x: 130, y: 115, description: 'Tín hiệu I2C SDA' },
+        { id: 'scl', name: 'SCL', label: 'SCL', type: 'digital', x: 156, y: 115, description: 'Xung nhịp I2C SCL' },
+      ];
+      return buildComponent(id, type, 'Màn hình LCD 1602 I2C', x, y, pins, { ...customProps });
+    }
+
+    case 'oled_i2c': {
+      const pins: Pin[] = [
+        { id: 'gnd', name: 'GND', label: 'GND', type: 'gnd', x: 35, y: 13, description: 'Nối đất GND' },
+        { id: 'vcc', name: 'VCC (3.3V-5V)', label: 'VCC', type: 'power', x: 52, y: 13, description: 'Nguồn 3.3V hoặc 5V' },
+        { id: 'scl', name: 'SCL (SCK)', label: 'SCL', type: 'digital', x: 69, y: 13, description: 'Xung nhịp I2C SCL' },
+        { id: 'sda', name: 'SDA', label: 'SDA', type: 'digital', x: 86, y: 13, description: 'Dữ liệu I2C SDA' },
+      ];
+      return buildComponent(id, type, 'Màn hình OLED 0.96" I2C SSD1306', x, y, pins, { ...customProps });
+    }
+
+    case 'relay_module': {
+      const pins: Pin[] = [
+        { id: 'vcc', name: 'VCC (+5V)', label: 'VCC', type: 'power', x: 145, y: 35, description: 'Nguồn nuôi cuộn hút relay 5V' },
+        { id: 'gnd', name: 'GND', label: 'GND', type: 'gnd', x: 145, y: 55, description: 'Nối đất GND' },
+        { id: 'in', name: 'IN (Tín hiệu kích)', label: 'IN', type: 'digital', x: 145, y: 75, description: 'Tín hiệu kích đóng relay từ chân Digital' },
+        { id: 'no', name: 'NO (Thường mở)', label: 'NO', type: 'passive', x: 15, y: 30, description: 'Normally Open' },
+        { id: 'com', name: 'COM (Chung)', label: 'COM', type: 'passive', x: 15, y: 50, description: 'Common' },
+        { id: 'nc', name: 'NC (Thường đóng)', label: 'NC', type: 'passive', x: 15, y: 70, description: 'Normally Closed' },
+      ];
+      return buildComponent(id, type, 'Module Rơ-le 5V 1 Kênh (Relay)', x, y, pins, { isTriggered: false, ...customProps });
+    }
+
+    case 'dht11': {
+      const pins: Pin[] = [
+        { id: 'vcc', name: 'VCC (3.3V-5V)', label: 'VCC', type: 'power', x: 20, y: 95, description: 'Cấp nguồn 3.3V - 5V' },
+        { id: 'data', name: 'DATA (Tín hiệu)', label: 'DAT', type: 'digital', x: 36, y: 95, description: 'Đường truyền dữ liệu 1-wire số' },
+        { id: 'nc', name: 'NC (Để trống)', label: 'NC', type: 'passive', x: 54, y: 95, description: 'Chân không kết nối' },
+        { id: 'gnd', name: 'GND', label: 'GND', type: 'gnd', x: 70, y: 95, description: 'Nối đất GND' },
+      ];
+      return buildComponent(id, type, 'Cảm biến nhiệt độ & độ ẩm DHT11', x, y, pins, { temperature: 28, humidity: 65, ...customProps });
+    }
+
+    case 'led_rgb': {
+      const pins: Pin[] = [
+        { id: 'red', name: 'Chân Đỏ (Red)', label: 'R', type: 'passive', x: 16, y: 78, description: 'Anode Đỏ (cần trở 220Ω)' },
+        { id: 'cathode', name: 'Cathode (-) GND', label: 'GND', type: 'gnd', x: 28, y: 78, description: 'Cực âm chung nối GND' },
+        { id: 'green', name: 'Chân Xanh Lá (Green)', label: 'G', type: 'passive', x: 42, y: 78, description: 'Anode Xanh Lá (cần trở 220Ω)' },
+        { id: 'blue', name: 'Chân Xanh Dương (Blue)', label: 'B', type: 'passive', x: 54, y: 78, description: 'Anode Xanh Dương (cần trở 220Ω)' },
+      ];
+      return buildComponent(id, type, 'Đèn LED RGB 4 Chân', x, y, pins, { rgbColor: '#a855f7', ...customProps });
+    }
+
+    case 'joystick': {
+      const pins: Pin[] = [
+        { id: 'gnd', name: 'GND', label: 'GND', type: 'gnd', x: 26, y: 105, description: 'Nối đất GND' },
+        { id: 'vcc', name: '+5V (VCC)', label: '+5V', type: 'power', x: 43, y: 105, description: 'Nguồn cấp 5V' },
+        { id: 'vrx', name: 'VRx (Trục X)', label: 'VRX', type: 'analog', x: 60, y: 105, description: 'Tín hiệu analog trục X (nối A0/VP)' },
+        { id: 'vry', name: 'VRy (Trục Y)', label: 'VRY', type: 'analog', x: 77, y: 105, description: 'Tín hiệu analog trục Y (nối A1/VN)' },
+        { id: 'sw', name: 'SW (Nút nhấn)', label: 'SW', type: 'digital', x: 94, y: 105, description: 'Công tắc nút bấm' },
+      ];
+      return buildComponent(id, type, 'Module Joystick 2 Trục', x, y, pins, { xVal: 512, yVal: 512, isPressed: false, ...customProps });
+    }
+
     default:
       throw new Error(`Unknown component type: ${type}`);
   }
